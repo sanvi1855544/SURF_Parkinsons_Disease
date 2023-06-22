@@ -9,6 +9,24 @@ head {
     font-size: 10em;
 }
 
+.nav{
+    background-color: rgb(19, 1, 1);
+    overflow: hidden;
+}
+
+.nav a{
+    float: center;
+    color:aquamarine;
+    text-align: center;
+    padding: 16px 20px;
+    font-size: 7px;
+}
+
+.nav a.active {
+    background-color:bisque;
+    color:rgb(19, 1, 1);
+}
+
 
 
 
