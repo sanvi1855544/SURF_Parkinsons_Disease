@@ -1,0 +1,14 @@
+html, body {
+    margin: 0;
+    height: 100%;
+    background-color: var(--#000080);
+    color: var(--#223426);
+}
+
+head {
+    font-size: 10em;
+}
+
+
+
+
