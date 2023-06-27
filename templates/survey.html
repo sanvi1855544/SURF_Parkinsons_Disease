@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <div class="container">
+        <img src="/static/caltech_logo.png" width="90" height="40" alt="giffin" class="right-align"/>
+    </div>
+    <h1 style="color:rgb(255, 255, 255);">Patient Eligibility Survey</h1>
+    <title> Stablehand2: Parkinson's disease </title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+
+</head>
+    <p><div class = "nav">
+        <p><a href="{{ url_for('index') }}">Home</a></p>
+        <p><a href="{{ url_for('survey') }}">Survey</a></p>
+        <p><a href="{{ url_for('instructions') }}">Instructions</a></p>
+        <p><a href="{{ url_for('therapy') }}">Stablehand2 Therapy</a></p>
+        <p><a href="{{ url_for('contact') }}">Contact</a></p>
+    </div></p>
+<body>
+   <script src="script.js"></script>
+</body>
+
+<script>
+    function checkEligibility(){
+        let a1 = document.querySelector('input[name="q1"]:checked').value;
+        let a2 = document.querySelector('input[name="q2"]:checked').value;
+        let a3 = document.querySelector('input[name="q3"]:checked').value;
+        let a4 = document.querySelector('input[name="q4"]:checked').value;
+        let a5 = document.querySelector('input[name="q5"]:checked').value;
+
+        if (a1 == 1 && a2 == 0 && a3 == 1 && a4 == 1 && a5 == 1){
+            document.getElementById("results").innerHTML = "You qualify to participate in this pilot study!";
+        }else{
+            document.getElementById("results").innerHTML = "You do not qualify to participate in this pilot study. Thank you for taking this survey!";
+        }
+    }
+</script>
+
+<form action="javascript:void(0);" onsubmit="checkEligibility()">
+    <h3 style="color:rgb(255, 255, 255);">What level of intensity is your Parkinson's?</h3>
+    <input type="radio" name = "q1" id ="q1o1" value= "0"> <label style="color:rgb(255, 255, 255);"for="q1o1">Low</label><br>
+    <input type="radio" name = "q1" id ="q1o2" value= "1"> <label style="color:rgb(255, 255, 255);"for="q1o2">Moderate</label><br>
+    <input type="radio" name = "q1" id ="q1o3" value= "2"> <label style="color:rgb(255, 255, 255);"for="q1o3">High</label><br>
+
+    <h3 style="color:rgb(255, 255, 255);">Do you know how to type?</h3>
+    <input type="radio" name = "q2" id ="q2o1" value= "0"> <label style="color:rgb(255, 255, 255);"for="q2o1">Yes</label><br>
+    <input type="radio" name = "q2" id ="q2o2" value= "1"> <label style="color:rgb(255, 255, 255);"for="q2o2">No</label><br>
+
+    <h3 style="color:rgb(255, 255, 255);">Do you have epilepsy?</h3>
+    <input type="radio" name = "q3" id ="q3o1" value= "0"> <label style="color:rgb(255, 255, 255);"for="q3o1">Yes</label><br>
+    <input type="radio" name = "q3" id ="q3o1" value= "1"> <label style="color:rgb(255, 255, 255);"for="q3o2">No</label><br>
+
+    <h3 style="color:rgb(255, 255, 255);">Do you use Deep Brain Stimulation (DBS)?</h3>
+    <input type="radio" name = "q4" id ="q4o1" value= "0"> <label style="color:rgb(255, 255, 255);"for="q4o1">Yes</label><br>
+    <input type="radio" name = "q4" id ="q4o2" value= "1"> <label style="color:rgb(255, 255, 255);"for="q4o2">No</label><br>
+
+    <h3 style="color:rgb(255, 255, 255);">Do you take Levodopa?</h3>
+    <input type="radio" name = "q5" id ="q5o1" value= "0"> <label style="color:rgb(255, 255, 255);"for="q5o1">Yes</label><br>
+    <input type="radio" name = "q5" id ="q5o2" value= "1"> <label style="color:rgb(255, 255, 255);"for="q5o2">No</label><br>
+    <br>
+    <br>
+    <br>
+    <input type="Submit" value= "Submit Form"/>
+    <br>
+    <div id = "results">
+
+</form>
+
+
+</html>
+
