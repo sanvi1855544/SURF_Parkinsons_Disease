@@ -1,1 +1,1 @@
-// javascript code will be written here
+//js code is written here

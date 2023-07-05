@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <div class="container">
+        <img src="/static/caltech_logo.png" width="90" height="40" alt="giffin" class="right-align"/>
+    </div>
+    <h1 style="color:rgb(255, 255, 255);">Stablehand2 Instructions</h1>
+    <title> Stablehand2: Parkinson's disease </title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+
+</head>
+    <p><div class = "nav">
+        <p><a href="{{ url_for('index') }}">Home</a></p>
+        <p><a href="{{ url_for('survey') }}">Survey</a></p>
+        <p><a href="{{ url_for('instructions') }}">Instructions</a></p>
+        <p><a href="{{ url_for('contact') }}">Contact</a></p>
+        <p><a href="{{ url_for('register') }}">Register</a></p>
+        <p><a href="{{ url_for('login') }}">Login</a></p>
+    </div></p>
+<body>
+    <form method="POST" action="{{ url_for('register')}}">
+        <label for="username">Make a username:</label>
+        <input type="text" name="username" id="username" required><br>
+        <label for="password">Make a password:</label>
+        <input type="text" name="password" id="password" required><br>
+        <input type="submit" value="Register">
+    </form>
+</body>
+</html>
