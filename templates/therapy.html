@@ -1,23 +1,297 @@
+
 <!DOCTYPE html>
 <html>
-<head>
-    <div class="container">
-        <img src="/static/caltech_logo.png" width="90" height="40" alt="giffin" class="right-align"/>
-    </div>
-    <h1 style="color:rgb(255, 255, 255);">Stablehand2</h1>
-    <title> Stablehand2: Parkinson's disease </title>
-    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <head>
+        <div class="container">
+            <img src="/static/caltech_logo.png" width="90" height="40" alt="giffin" class="right-align"/>
+        </div>
+        <h1 style="color:rgb(255, 255, 255);">Stablehand2</h1>
+        <title> Stablehand2: Parkinson's disease </title>
+        <link rel="stylesheet" type="text/css" href="/static/styles.css">
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background-color: #f0f0f0;
+            }
 
-</head>
-    <p><div class = "nav">
-        <p><a href="{{ url_for('index') }}">Home</a></p>
-        <p><a href="{{ url_for('survey') }}">Survey</a></p>
-        <p><a href="{{ url_for('instructions') }}">Instructions</a></p>
-        <p><a href="{{ url_for('contact') }}">Contact</a></p>
-        <p><a href="{{ url_for('register') }}">Register</a></p>
-        <p><a href="{{ url_for('login') }}">Login</a></p>
-    </div></p>
-<body>
-   <script src="script.js"></script>
-</body>
+            .container {
+                text-align: left;
+                margin-left: 150px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            input[type="number"] {
+                width: 60px;
+                padding: 5px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+            }
+
+            input[type="color"] {
+                padding: 5px;
+                margin-bottom: 10px;
+            }
+
+            button {
+                padding: 10px 20px;
+                background-color: #4caf50;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+        <p><div class = "nav">
+            <p><a href="{{ url_for('index') }}">Home</a></p>
+            <p><a href="{{ url_for('survey') }}">Survey</a></p>
+            <p><a href="{{ url_for('instructions') }}">Instructions</a></p>
+            <p><a href="{{ url_for('contact') }}">Contact</a></p>
+            <p><a href="{{ url_for('register') }}">Register</a></p>
+            <p><a href="{{ url_for('login') }}">Login</a></p>
+        </div></p>
+    <body>
+        <div class="container">
+            <label for="numLayers">Number of Layers:</label>
+            <input type="number" id="numLayers" min="1" max="100" value="8" />
+
+            <label for="length">Length:</label>
+            <input type="number" id="length" min="10" max="200" value="100" />
+
+            <label for="height">Height:</label>
+            <input type="number" id="height" min="10" max="200" value="100" />
+
+            <label for="animationSpeed">Animation Speed:</label>
+            <input
+                type="number"
+                id="animationSpeed"
+                min="1"
+                max="10"
+                value="4"
+            />
+
+            <label for="squareColor">Square Color:</label>
+            <input type="color" id="squareColor" value="#000000" />
+
+            <label for="backgroundColor">Background Color:</label>
+            <input type="color" id="backgroundColor" value="#f0f0f0" />
+
+            <label for="patternType">Pattern Type:</label>
+            <select id="patternType">
+                <option value="checkerboard">Checkerboard</option>
+                <option value="sine">Sine</option>
+            </select>
+
+            <label for="patternAngle">Pattern Angle:</label>
+            <input
+                type="number"
+                id="patternAngle"
+                min="0"
+                max="360"
+                value="0"
+            />
+
+            <label for="patternWidth">Pattern Width:</label>
+            <input
+                type="number"
+                id="patternWidth"
+                min="0"
+                max="3456"
+                value="1500"
+            />
+
+            <button id="updateBtn">Enter</button>
+        </div>
+
+        <canvas id="canvas"></canvas>
+
+        <script>
+            let numLayers = 8;
+            let length = 100;
+            let height = 100;
+            let animationSpeed = 4;
+            let squareColor = "#000000";
+            let backgroundColor = "#f0f0f0";
+            let patternType = "checkerboard";
+            let patternAngle = 0;
+            let patternWidth = 1500;
+
+            // Create canvas and context
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+
+            // Checkerboard size and properties
+            let numUnits = Math.floor((patternWidth + 600) / length); // Adjusted width with white space
+            let canvasHeight = height * numLayers;
+
+            // Update canvas size
+            function updateCanvasSize() {
+                canvas.width = window.innerWidth;
+                canvasHeight = height * numLayers;
+                canvas.height = canvasHeight;
+                numUnits = Math.floor((patternWidth + 600) / length); // Adjusted width with white space
+            }
+
+            // Function to draw a single square on the canvas
+            function drawSquare(x, y, color) {
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, length, height);
+            }
+
+            // Function to draw the checkerboard pattern
+            function drawCheckerboard() {
+                for (let j = 0; j < numLayers; j++) {
+                    for (let i = 0; i < numUnits; i++) {
+                        const x = i * length + offset;
+                        const y = j * height;
+
+                        if ((i + j) % 2 === 0) {
+                            drawSquare(x, y, squareColor);
+                        } else {
+                            drawSquare(x, y, backgroundColor);
+                        }
+                    }
+                }
+
+                // Draw rectangles to cover the sides based on pattern width
+                ctx.fillStyle = backgroundColor;
+                ctx.fillRect(
+                    0,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+                ctx.fillRect(
+                    window.innerWidth - (window.innerWidth - patternWidth) / 2,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+            }
+
+            // Function to draw the sine pattern
+            function drawSinePattern() {
+                for (let j = 0; j < numLayers; j++) {
+                    for (let i = 0; i < numUnits; i++) {
+                        const x = i * length + offset;
+                        const y = j * height;
+                        const sineValue = Math.sin((x / length) * Math.PI * 2);
+
+                        const color =
+                            sineValue > 0 ? squareColor : backgroundColor;
+                        drawSquare(x, y, color);
+                    }
+                }
+
+                // Draw rectangles to cover the sides based on pattern width
+                ctx.fillStyle = backgroundColor;
+                ctx.fillRect(0, 0, patternWidth * length, canvasHeight);
+                ctx.fillRect(
+                    (numUnits - patternWidth) * length,
+                    0,
+                    patternWidth * length + offset,
+                    canvasHeight
+                );
+            }
+
+            // Update the pattern based on the selected pattern type
+            function updatePattern() {
+                if (patternType === "checkerboard") {
+                    drawCheckerboard();
+                } else if (patternType === "sine") {
+                    drawSinePattern();
+                }
+            }
+
+            // Checkerboard animation variables
+            let offset = 0;
+            let animationId;
+            let lastFrameTime = 0;
+            const frameRate = 60;
+            const frameDuration = 1000 / frameRate;
+
+            // Animation loop
+            function animate(timestamp) {
+                const elapsed = timestamp - lastFrameTime;
+
+                if (elapsed > frameDuration) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    updatePattern();
+
+                    offset += animationSpeed; // Adjust the speed of the animation by changing this value
+
+                    // Reset the offset when the pattern goes off the screen
+                    if (offset >= 2 * length) {
+                        offset = 0;
+                    }
+
+                    lastFrameTime = timestamp;
+                }
+
+                animationId = requestAnimationFrame(animate);
+            }
+
+            // Start the animation
+            function startAnimation() {
+                animationId = requestAnimationFrame(animate);
+            }
+
+            // Stop the animation
+            function stopAnimation() {
+                cancelAnimationFrame(animationId);
+            }
+
+            // Function to update variables and restart the animation
+            function updateVariables() {
+                numLayers = parseInt(
+                    document.getElementById("numLayers").value
+                );
+                length = parseInt(document.getElementById("length").value);
+                height = parseInt(document.getElementById("height").value);
+                animationSpeed = parseInt(
+                    document.getElementById("animationSpeed").value
+                );
+                squareColor = document.getElementById("squareColor").value;
+                backgroundColor =
+                    document.getElementById("backgroundColor").value;
+                patternType = document.getElementById("patternType").value;
+                patternAngle = parseInt(
+                    document.getElementById("patternAngle").value
+                );
+                patternWidth = parseInt(
+                    document.getElementById("patternWidth").value
+                );
+
+                updateCanvasSize();
+                stopAnimation();
+                startAnimation();
+            }
+
+            // Event listener for the Enter button
+            document
+                .getElementById("updateBtn")
+                .addEventListener("click", updateVariables);
+
+            // Resize canvas and start animation when the window is resized
+            window.addEventListener("resize", function () {
+                updateCanvasSize();
+                stopAnimation();
+                startAnimation();
+            });
+
+            // Initial setup
+            updateCanvasSize();
+            startAnimation();
+        </script>
+    </body>
 </html>
