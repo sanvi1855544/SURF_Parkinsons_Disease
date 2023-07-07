@@ -80,8 +80,8 @@
                 value="4"
             />
 
-            <label for="squareColor">Square Color:</label>
-            <input type="color" id="squareColor" value="#000000" />
+            <label for="color">Color:</label>
+            <input type="color" id="color" value="#000000" />
 
             <label for="backgroundColor">Background Color:</label>
             <input type="color" id="backgroundColor" value="#f0f0f0" />
@@ -90,6 +90,7 @@
             <select id="patternType">
                 <option value="checkerboard">Checkerboard</option>
                 <option value="sine">Sine</option>
+                <option value="chevron">Chevron</option>
             </select>
 
             <label for="patternAngle">Pattern Angle:</label>
@@ -120,7 +121,7 @@
             let length = 100;
             let height = 100;
             let animationSpeed = 4;
-            let squareColor = "#000000";
+            let color = "#000000";
             let backgroundColor = "#f0f0f0";
             let patternType = "checkerboard";
             let patternAngle = 0;
@@ -129,6 +130,24 @@
             // Create canvas and context
             const canvas = document.getElementById("canvas");
             const ctx = canvas.getContext("2d");
+
+            // Sine wave:
+            const rows = 3;
+            const sineWave = {
+                amplitude: 70,
+                freq: 0.027,
+                speed: 0.2,
+                phi: 0,
+            }
+
+            // Chevron
+            const cRows = 5
+            const chevron = {
+                width: 70,
+                height: 150,
+                speed: 0.2
+            }
+
 
             // Checkerboard size and properties
             let numUnits = Math.floor((patternWidth + 600) / length); // Adjusted width with white space
@@ -156,7 +175,7 @@
                         const y = j * height;
 
                         if ((i + j) % 2 === 0) {
-                            drawSquare(x, y, squareColor);
+                            drawSquare(x, y, color);
                         } else {
                             drawSquare(x, y, backgroundColor);
                         }
@@ -180,36 +199,64 @@
             }
 
             // Function to draw the sine pattern
-            function drawSinePattern() {
-                for (let j = 0; j < numLayers; j++) {
-                    for (let i = 0; i < numUnits; i++) {
-                        const x = i * length + offset;
-                        const y = j * height;
-                        const sineValue = Math.sin((x / length) * Math.PI * 2);
+            function drawSinePattern(row) {
+                const yCenter = ((canvas.height/rows) * row) + 100 ;
 
-                        const color =
-                            sineValue > 0 ? squareColor : backgroundColor;
-                        drawSquare(x, y, color);
-                    }
+                ctx.beginPath();
+                ctx.moveTo(0, yCenter);
+
+
+                ctx.lineWidth = 40;
+
+                for (let x=0; x < canvas.width; x++){
+                    const y = sineWave.amplitude * Math.sin(sineWave.freq * x + sineWave.phi);
+                    ctx.lineTo(x, yCenter - y);
                 }
 
-                // Draw rectangles to cover the sides based on pattern width
-                ctx.fillStyle = backgroundColor;
-                ctx.fillRect(0, 0, patternWidth * length, canvasHeight);
-                ctx.fillRect(
-                    (numUnits - patternWidth) * length,
-                    0,
-                    patternWidth * length + offset,
-                    canvasHeight
-                );
+                
+                ctx.strokeStyle = color;
+                ctx.stroke();
+
+
             }
+
+            function drawChevron(row) {
+                const yCenter = ((canvas.height/cRows) * row) + 100;
+                const nChevrons = 22;
+                const spacing = 70;
+                const time = Date.now();
+
+                for (let i = 0; i < nChevrons; i++){
+                    const xCenter = ((canvas.height/2) + (time / 10) + i * (canvas.width + spacing)) % canvas.width; 
+                    ctx.beginPath();
+                    ctx.moveTo(xCenter, yCenter);
+                    ctx.lineWidth = 10;
+                    ctx.lineTo(xCenter + chevron.width/2, yCenter + chevron.height/2);
+                    ctx.lineTo(xCenter, yCenter + (chevron.height));
+                    ctx.lineTo(xCenter - chevron.width, yCenter + chevron.height);
+                    ctx.lineTo(xCenter - 1/2*chevron.width, yCenter + chevron.height/2);
+                    ctx.lineTo(xCenter - chevron.width, yCenter)
+                    ctx.closePath();
+                    ctx.strokeStyle = color;
+                    ctx.stroke();
+                }
+            }
+
+
 
             // Update the pattern based on the selected pattern type
             function updatePattern() {
                 if (patternType === "checkerboard") {
                     drawCheckerboard();
                 } else if (patternType === "sine") {
-                    drawSinePattern();
+                    for (let i = 0; i < rows; i++){
+                        drawSinePattern(i);
+                    }
+                    sineWave.phi -= sineWave.speed;
+                } else if (patternType === "chevron") {
+                    for (let i = 0; i < cRows; i++){
+                        drawChevron(i);
+                    }
                 }
             }
 
@@ -261,7 +308,7 @@
                 animationSpeed = parseInt(
                     document.getElementById("animationSpeed").value
                 );
-                squareColor = document.getElementById("squareColor").value;
+                color = document.getElementById("color").value;
                 backgroundColor =
                     document.getElementById("backgroundColor").value;
                 patternType = document.getElementById("patternType").value;
