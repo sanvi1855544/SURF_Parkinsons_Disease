@@ -88,6 +88,7 @@
 
             <label for="patternType">Pattern Type:</label>
             <select id="patternType">
+                <option value="none">None</option>
                 <option value="checkerboard">Checkerboard</option>
                 <option value="sine">Sine</option>
                 <option value="chevron">Chevron</option>
@@ -123,7 +124,7 @@
             let animationSpeed = 4;
             let color = "#000000";
             let backgroundColor = "#f0f0f0";
-            let patternType = "checkerboard";
+            let patternType = "none";
             let patternAngle = 0;
             let patternWidth = 1500;
 
@@ -246,6 +247,9 @@
 
             // Update the pattern based on the selected pattern type
             function updatePattern() {
+                if (patternType === "none") {
+                    return
+                }
                 if (patternType === "checkerboard") {
                     drawCheckerboard();
                 } else if (patternType === "sine") {
