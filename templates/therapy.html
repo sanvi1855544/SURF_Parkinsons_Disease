@@ -102,7 +102,6 @@
 
             <label for="patternType">Pattern Type:</label>
             <select id="patternType">
-                <option value="none">None</option>
                 <option value="checkerboard">Checkerboard</option>
                 <option value="sine">Sine</option>
                 <option value="chevron">Chevron</option>
@@ -132,7 +131,7 @@
             let animationSpeed = 2;
             let color = "#000000";
             let backgroundColor = "#f0f0f0";
-            let patternType = "none";
+            let patternType = "checkerboard";
             let patternAngle = 0;
             let patternWidth = 1500;
 
@@ -208,8 +207,46 @@
 
 
             function drawCheckerboardLeft() {
+                const patternWidth = (numUnits + 100) * length;
+                offset = (offset - 0.25 * animationSpeed) % (patternWidth);
+                for (let j = 0; j < numLayers; j++) {
+                    for (let i = 1; i < numUnits + 100; i++) {
+                        const x = (i * length + offset) % patternWidth;
+                        if ( x < 0 ){
+                            offset += patternWidth;
+                        }
+                        const y = j * height;
+
+                        if ((i + j) % 2 === 0) {
+                            drawSquare(x, y, color);
+                        } else {
+                            drawSquare(x, y, backgroundColor);
+                        }
+                    }
+                }
+
+                // Draw rectangles to cover the sides based on pattern width
+                ctx.fillStyle = backgroundColor;
+                ctx.fillRect(
+                    0,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+                ctx.fillRect(
+                    window.innerWidth - (window.innerWidth - patternWidth) / 2,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+            }
+
+
+            
+            function drawCheckerboardDown() {
                 
             }
+
 
             // Function to draw the sine pattern horizontally
             function drawSineH(row) {
