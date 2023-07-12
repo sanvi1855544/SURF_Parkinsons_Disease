@@ -5,7 +5,6 @@
         <div class="container">
             <img src="/static/caltech_logo.png" width="90" height="40" alt="giffin" class="right-align"/>
         </div>
-        <h1 style="color:rgb(255, 255, 255);">Stablehand2</h1>
         <title> Stablehand2: Parkinson's disease </title>
         <link rel="stylesheet" type="text/css" href="/static/styles.css">
         <style>
@@ -62,7 +61,7 @@
         </div></p>
     <body>
         <div class="container">
-            <label for="numLayers">Number of Layers:</label>
+            <label for="numLayers">Layers:</label>
             <input type="number" id="numLayers" min="1" max="100" value="8" />
 
             <label for="length">Length:</label>
@@ -71,13 +70,28 @@
             <label for="height">Height:</label>
             <input type="number" id="height" min="10" max="200" value="100" />
 
+            <label for="sineRows">Sine Rows:</label>
+            <input type="number" id="sineRows" min="1" max="8" value="4" />
+
+            <label for="sineAmplitude">Sine Amplitude:</label>
+            <input type="number" id="sineAmplitude" min="10" max="100" value="50" />
+
+            <label for="direction">Direction:</label>
+            <select id="direction">
+                <option value="right">Right</option>
+                <option value="left">Left</option>
+                <option value="up">Up</option>
+                <option value="down">Down</option>
+            </select>
+
+
             <label for="animationSpeed">Animation Speed:</label>
             <input
                 type="number"
                 id="animationSpeed"
                 min="1"
                 max="10"
-                value="4"
+                value="2"
             />
 
             <label for="color">Color:</label>
@@ -93,14 +107,6 @@
                 <option value="chevron">Chevron</option>
             </select>
 
-            <label for="patternAngle">Pattern Angle:</label>
-            <input
-                type="number"
-                id="patternAngle"
-                min="0"
-                max="360"
-                value="0"
-            />
 
             <label for="patternWidth">Pattern Width:</label>
             <input
@@ -120,7 +126,9 @@
             let numLayers = 8;
             let length = 100;
             let height = 100;
-            let animationSpeed = 4;
+            let sineRows = 4
+            let sineAmplitude = 50;
+            let animationSpeed = 2;
             let color = "#000000";
             let backgroundColor = "#f0f0f0";
             let patternType = "checkerboard";
@@ -132,9 +140,7 @@
             const ctx = canvas.getContext("2d");
 
             // Sine wave:
-            const rows = 3;
             const sineWave = {
-                amplitude: 70,
                 freq: 0.027,
                 speed: 0.2,
                 phi: 0,
@@ -168,10 +174,10 @@
             }
 
             // Function to draw the checkerboard pattern
-            function drawCheckerboard() {
+            function drawCheckerboardRight() {
                 for (let j = 0; j < numLayers; j++) {
                     for (let i = 0; i < numUnits; i++) {
-                        const x = i * length + offset;
+                        const x = (i * length + offset)
                         const y = j * height;
 
                         if ((i + j) % 2 === 0) {
@@ -198,9 +204,15 @@
                 );
             }
 
-            // Function to draw the sine pattern
-            function drawSinePattern(row) {
-                const yCenter = ((canvas.height/rows) * row) + 100 ;
+
+
+            function drawCheckerboardLeft() {
+                
+            }
+
+            // Function to draw the sine pattern horizontally
+            function drawSineH(row) {
+                const yCenter = ((canvas.height/sineRows) * row) + 100 ;
 
                 ctx.beginPath();
                 ctx.moveTo(0, yCenter);
@@ -209,7 +221,7 @@
                 ctx.lineWidth = 40;
 
                 for (let x=0; x < canvas.width; x++){
-                    const y = sineWave.amplitude * Math.sin(sineWave.freq * x + sineWave.phi);
+                    const y = sineAmplitude * Math.sin(sineWave.freq * x + sineWave.phi);
                     ctx.lineTo(x, yCenter - y);
                 }
 
@@ -220,25 +232,79 @@
 
             }
 
-            function drawChevron(row) {
+            // Function to draw the sine pattern vertically
+            function drawSineV(row) {
+                const xCenter = ((canvas.width/sineRows) * row) + 100 ;
+
+                ctx.beginPath();
+                ctx.moveTo(xCenter, 0);
+
+
+                ctx.lineWidth = 40;
+
+                for (let y=0; y < canvas.height; y++){
+                    const x = sineAmplitude * Math.sin(sineWave.freq * y + sineWave.phi);
+                    ctx.lineTo(xCenter - x, y);
+                }
+
+                
+                ctx.strokeStyle = color;
+                ctx.stroke();
+            }
+
+            function drawRightChevron(row, speed) {
                 const yCenter = ((canvas.height/cRows) * row) + 100;
                 const nChevrons = 22;
                 const spacing = 70;
-                const time = Date.now();
+                const time = speed * Date.now();
 
                 for (let i = 0; i < nChevrons; i++){
                     const xCenter = ((canvas.height/2) + (time / 10) + i * (canvas.width + spacing)) % canvas.width; 
                     ctx.beginPath();
                     ctx.moveTo(xCenter, yCenter);
-                    ctx.lineWidth = 10;
+                    ctx.lineWidth = 5;
                     ctx.lineTo(xCenter + chevron.width/2, yCenter + chevron.height/2);
                     ctx.lineTo(xCenter, yCenter + (chevron.height));
                     ctx.lineTo(xCenter - chevron.width, yCenter + chevron.height);
                     ctx.lineTo(xCenter - 1/2*chevron.width, yCenter + chevron.height/2);
                     ctx.lineTo(xCenter - chevron.width, yCenter)
                     ctx.closePath();
-                    ctx.strokeStyle = color;
-                    ctx.stroke();
+
+                    if (i % 2 === 0){
+                        ctx.fillStyle = backgroundColor;
+                        ctx.fill();
+                    }else{
+                        ctx.fillStyle = color;
+                        ctx.fill();
+                    }
+                }
+            }
+
+            function drawLeftChevron(row, speed) {
+                const yCenter = ((canvas.height/cRows) * row) + 100;
+                const nChevrons = 50;
+                const spacing = 70;
+                const time = (speed) * Date.now();
+                // const tWidth = nChevrons * (chevron.width + spacing);
+                // const offset = (canvas.width + spacing) - ((time) % tWidth);
+                for (let i = 0; i < nChevrons; i++){
+                    const xCenter = canvas.width - ((canvas.height / 2) + (time / 10) + i * (canvas.width + spacing)) % canvas.width;
+                    ctx.beginPath();
+                    ctx.moveTo(xCenter, yCenter);
+                    ctx.lineWidth = 5;
+                    ctx.lineTo(xCenter - chevron.width, yCenter)
+                    ctx.lineTo(xCenter - 3/2*chevron.width, yCenter + chevron.height/2);
+                    ctx.lineTo(xCenter - chevron.width, yCenter + chevron.height);
+                    ctx.lineTo(xCenter, yCenter + (chevron.height));
+                    ctx.lineTo(xCenter - 1/2*chevron.width, yCenter + chevron.height/2);
+                    ctx.closePath();
+                    if (i % 2 === 0){
+                        ctx.fillStyle = backgroundColor;
+                        ctx.fill();
+                    }else{
+                        ctx.fillStyle = color;
+                        ctx.fill();
+                    }
                 }
             }
 
@@ -246,19 +312,54 @@
 
             // Update the pattern based on the selected pattern type
             function updatePattern() {
-                if (patternType === "checkerboard") {
-                    drawCheckerboard();
-                } else if (patternType === "sine") {
-                    for (let i = 0; i < rows; i++){
-                        drawSinePattern(i);
+                if (direction === "right"){
+                    if (patternType === "checkerboard") {
+                        drawCheckerboardRight();
+                    } else if (patternType === "sine") {
+                        for (let i = 0; i < sineRows; i++){
+                            drawSineH(i);
+                        }
+                        sineWave.phi -= sineWave.speed * animationSpeed;
+                    } else if (patternType === "chevron") {
+                        for (let i = 0; i < cRows; i++){
+                            drawRightChevron(i, animationSpeed);
+                        }
                     }
-                    sineWave.phi -= sineWave.speed;
-                } else if (patternType === "chevron") {
-                    for (let i = 0; i < cRows; i++){
-                        drawChevron(i);
+                } else if (direction === "left"){
+                    if (patternType === "checkerboard") { 
+                        drawCheckerboardLeft();
+                    } else if (patternType === "sine") {
+                        for (let i = 0; i < sineRows; i++){
+                            drawSineH(i);
+                        }
+                        sineWave.phi += sineWave.speed * animationSpeed;
+                    } else if (patternType === "chevron") {
+                        for (let i = 0; i < cRows; i++){
+                            drawLeftChevron(i, animationSpeed);
+                        }
+                    }
+                } else if (direction === "up"){
+                    if (patternType === "checkerboard"){
+                        drawCheckerboardDown()
+                    } else if (patternType === "sine") {
+                        for (let i = 0; i < sineRows; i++){
+                            drawSineV(i);
+                        }
+                        sineWave.phi += sineWave.speed * animationSpeed;
+                    }
+                } else if (direction === "down"){
+                    if (patternType === "checkerboard"){
+                        drawCheckerboardDown()
+                    } else if (patternType === "sine") {
+                        for (let i = 0; i < sineRows; i++){
+                            drawSineV(i);
+                        }
+                        sineWave.phi -= sineWave.speed * animationSpeed;
                     }
                 }
+                
             }
+
 
             // Checkerboard animation variables
             let offset = 0;
@@ -275,8 +376,12 @@
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     updatePattern();
 
-                    offset += animationSpeed; // Adjust the speed of the animation by changing this value
-
+                    if (direction == 'left' && patternType == "checkerboard"){
+                        offset -= animationSpeed; 
+                    }else{
+                        offset += animationSpeed; // Adjust the speed of the animation by changing this value
+                    }
+                    
                     // Reset the offset when the pattern goes off the screen
                     if (offset >= 2 * length) {
                         offset = 0;
@@ -305,6 +410,8 @@
                 );
                 length = parseInt(document.getElementById("length").value);
                 height = parseInt(document.getElementById("height").value);
+                sineRows = parseInt(document.getElementById("sineRows").value);
+                sineAmplitude = parseInt(document.getElementById("sineAmplitude").value);
                 animationSpeed = parseInt(
                     document.getElementById("animationSpeed").value
                 );
@@ -312,6 +419,7 @@
                 backgroundColor =
                     document.getElementById("backgroundColor").value;
                 patternType = document.getElementById("patternType").value;
+                direction = document.getElementById("direction").value;
                 patternAngle = parseInt(
                     document.getElementById("patternAngle").value
                 );

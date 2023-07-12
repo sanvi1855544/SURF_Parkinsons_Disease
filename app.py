@@ -1,6 +1,7 @@
 
 from flask import Flask, render_template, request, redirect, url_for, session, g
 import sqlite3
+import requests
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -33,7 +34,12 @@ with app.app_context():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    response = requests.get('http://worldtimeapi.org/api/ip')
+    if response.status_code == 200: 
+        times = response.json()
+        live_time = times['datetime']
+        return render_template('index.html', time=live_time)
+    return "Couldn't get time from API"
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
