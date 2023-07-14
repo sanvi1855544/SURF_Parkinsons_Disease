@@ -147,7 +147,8 @@
             }
 
             // Chevron
-            const cRows = 5
+            const cRows = 5;
+            const nRows = 10;
             const chevron = {
                 width: 70,
                 height: 150,
@@ -177,7 +178,7 @@
             function drawCheckerboardRight() {
                 for (let j = 0; j < numLayers; j++) {
                     for (let i = 0; i < numUnits; i++) {
-                        const x = (i * length + offset)
+                        const x = (i * length + offset);
                         const y = j * height;
 
                         if ((i + j) % 2 === 0) {
@@ -208,7 +209,7 @@
 
             function drawCheckerboardLeft() {
                 const patternWidth = (numUnits + 100) * length;
-                offset = (offset - 0.25 * animationSpeed) % (patternWidth);
+                offset = (offset - animationSpeed) % (patternWidth);
                 for (let j = 0; j < numLayers; j++) {
                     for (let i = 1; i < numUnits + 100; i++) {
                         const x = (i * length + offset) % patternWidth;
@@ -242,8 +243,80 @@
             }
 
 
-            
+            function drawCheckerboardUp(){
+                const patternWidth = (numUnits) * height;
+                offset = (offset - (Date.now() * animationSpeed * 0.1)) % (patternWidth);
+
+                if (offset < 0){
+                    offset += patternWidth
+                }
+                
+                for (let j = 0; j < numUnits; j++) {
+                    for (let i = 0; i < numUnits; i++) {
+                        const x = i * length;
+                        const y = ((j * height + offset) % patternWidth) % patternWidth;
+
+                        if ((i + j) % 2 === 0) {
+                            drawSquare(x, y, color);
+                        } else {
+                            drawSquare(x, y, backgroundColor);
+                        }
+                    }
+                }
+
+                // Draw rectangles to cover the sides based on pattern width
+                ctx.fillStyle = backgroundColor;
+                ctx.fillRect(
+                    0,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+                ctx.fillRect(
+                    window.innerWidth - (window.innerWidth - patternWidth) / 2,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+                
+            }
+
+
             function drawCheckerboardDown() {
+                const patternWidth = (numUnits) * height;
+                offset = (offset + (Date.now() * animationSpeed * 0.1)) % (patternWidth);
+
+                if (offset < 0){
+                    offset += patternWidth
+                }
+                
+                for (let j = 0; j < numUnits; j++) {
+                    for (let i = 0; i < numUnits; i++) {
+                        const x = i * length;
+                        const y = ((j * height + offset) % patternWidth) % patternWidth;
+
+                        if ((i + j) % 2 === 0) {
+                            drawSquare(x, y, color);
+                        } else {
+                            drawSquare(x, y, backgroundColor);
+                        }
+                    }
+                }
+
+                // Draw rectangles to cover the sides based on pattern width
+                ctx.fillStyle = backgroundColor;
+                ctx.fillRect(
+                    0,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+                ctx.fillRect(
+                    window.innerWidth - (window.innerWidth - patternWidth) / 2,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
                 
             }
 
@@ -320,7 +393,7 @@
 
             function drawLeftChevron(row, speed) {
                 const yCenter = ((canvas.height/cRows) * row) + 100;
-                const nChevrons = 50;
+                const nChevrons = 22;
                 const spacing = 70;
                 const time = (speed) * Date.now();
                 // const tWidth = nChevrons * (chevron.width + spacing);
@@ -343,6 +416,52 @@
                         ctx.fillStyle = color;
                         ctx.fill();
                     }
+                }
+            }
+
+            function drawChevronUp(row, speed) {
+                const xCenter = ((canvas.width/nRows) * row);
+                const nChevrons = 14;
+                const spacing = 100;
+                const time = (speed) * Date.now();
+                for (let i = 0; i < nChevrons; i++){
+                    const yCenter = canvas.height - ((canvas.width / 2) + (time / 10) + i * (canvas.height + spacing)) % canvas.height;
+                    ctx.beginPath();
+                    ctx.moveTo(xCenter, yCenter);
+                    ctx.lineWidth = 5;
+                    ctx.lineTo(xCenter - chevron.height/2, yCenter - chevron.width/2);
+                    ctx.lineTo(xCenter - chevron.height, yCenter);
+                    ctx.lineTo(xCenter - chevron.height, yCenter + chevron.width);
+                    ctx.lineTo(xCenter - chevron.height/2, yCenter + chevron.width/2);
+                    ctx.lineTo(xCenter, yCenter + chevron.width);
+                    ctx.closePath();
+
+                    ctx.fillStyle = color;
+                    ctx.fill();
+
+                }
+            }
+
+            function drawChevronDown(row, speed) {
+                const xCenter = ((canvas.width/nRows) * row);
+                const nChevrons = 14;
+                const spacing = 100;
+                const time = (speed) * Date.now();
+                for (let i = 0; i < nChevrons; i++){
+                    const yCenter = ((canvas.width / 2) + (time / 10) + i * (canvas.height + spacing)) % canvas.height;
+                    ctx.beginPath();
+                    ctx.moveTo(xCenter, yCenter);
+                    ctx.lineWidth = 5;
+                    ctx.lineTo(xCenter - chevron.height/2, yCenter + chevron.width/2)
+                    ctx.lineTo(xCenter - chevron.height, yCenter);
+                    ctx.lineTo(xCenter - chevron.height, yCenter + chevron.width);
+                    ctx.lineTo(xCenter - chevron.height/2, yCenter + 3*chevron.width/2)
+                    ctx.lineTo(xCenter, yCenter + chevron.width);
+                    ctx.closePath();
+
+                    ctx.fillStyle = color;
+                    ctx.fill();
+
                 }
             }
 
@@ -378,12 +497,16 @@
                     }
                 } else if (direction === "up"){
                     if (patternType === "checkerboard"){
-                        drawCheckerboardDown()
+                        drawCheckerboardUp();
                     } else if (patternType === "sine") {
                         for (let i = 0; i < sineRows; i++){
                             drawSineV(i);
                         }
                         sineWave.phi += sineWave.speed * animationSpeed;
+                    } else if (patternType === "chevron"){
+                        for (let i = 0; i < nRows; i++){
+                            drawChevronUp(i, animationSpeed);
+                        }
                     }
                 } else if (direction === "down"){
                     if (patternType === "checkerboard"){
@@ -393,6 +516,10 @@
                             drawSineV(i);
                         }
                         sineWave.phi -= sineWave.speed * animationSpeed;
+                    } else if (patternType === "chevron"){
+                        for (let i = 0; i < nRows; i++){
+                            drawChevronDown(i, animationSpeed);
+                        }
                     }
                 }
                 
@@ -416,7 +543,9 @@
 
                     if (direction == 'left' && patternType == "checkerboard"){
                         offset -= animationSpeed; 
-                    }else{
+                    } else if (direction == 'down' && patternType == "chevron") {
+                        offset -= animationSpeed;
+                    } else{
                         offset += animationSpeed; // Adjust the speed of the animation by changing this value
                     }
                     
