@@ -49,6 +49,52 @@
                 border-radius: 5px;
                 cursor: pointer;
             }
+
+            #rectangle {
+                width: 200px;
+                height: 150px;
+                background-color: blue;
+                position: absolute;
+                top: 100px;
+                left: 100px;
+                cursor: move;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+            }
+
+            #textInputWrapper {
+                position: absolute;
+                top: 50px;
+                left: 10px;
+                width: 180px;
+                height: 20px;
+                cursor: move;
+            }
+
+            #textInput {
+                width: 100%;
+                height: 100%;
+                resize: none;
+                border: none;
+                outline: none;
+                padding: 0;
+                margin: 0;
+                font-size: 14px;
+            }
+
+            .resize-handle {
+                width: 10px;
+                height: 10px;
+                background: white;
+                border: 1px solid black;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                cursor: se-resize;
+                pointer-events: auto; /* Ensure the resize handle receives the mouse events */
+            }
         </style>
     </head>
         <p><div class = "nav">
@@ -117,12 +163,247 @@
                 value="1500"
             />
 
+            <label for="colorInput">Rectangle Color:</label>
+            <input type="color" id="colorInput" />
+
+            <label for="numText">Number of Words/Sentences:</label>
+            <input type="number" id="numText" min="1" max="100" value="8" />
+
+            <label for="text-color-input">Text Color:</label>
+            <input type="color" id="text-color-input" value="#f0f0f0" />
+
+            <button id="load-dictionary-btn">Load Dictionary</button>
+
             <button id="updateBtn">Enter</button>
+        </div>
+
+        <div id="rectangle">
+            <div class="resize-handle"></div>
+            <span id="text">Centered Text</span>
+        </div>
+
+        <div id="textInputWrapper">
+            <textarea
+                id="textInput"
+                placeholder="Double Click to Type"
+            ></textarea>
         </div>
 
         <canvas id="canvas"></canvas>
 
         <script>
+
+            // TYPING DISPLAY CODE ----------------------------------
+            //
+
+            let keystrokes = [];
+            let dictionary = [];
+
+            function loadDictionaryFromFile(callback) {
+                const fileInput = document.createElement("input");
+                fileInput.type = "file";
+                fileInput.accept = ".txt";
+
+                fileInput.addEventListener("change", (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            const fileContent = e.target.result;
+                            dictionary = fileContent
+                                .split("\n")
+                                .map((word) => word.trim())
+                                .filter((word) => word !== "");
+                            callback();
+                        };
+                        reader.readAsText(file);
+                    }
+                });
+
+                fileInput.click();
+            }
+
+            function getRandomWords(numWords) {
+                let randomWords = [];
+                for (let i = 0; i < numWords; i++) {
+                    const randomIndex = Math.floor(
+                        Math.random() * dictionary.length
+                    );
+                    randomWords.push(dictionary[randomIndex]);
+                }
+                return randomWords.join(" ");
+            }
+
+            function recordKeystroke(event) {
+                const keystroke = {
+                    key: event.key,
+                    timestamp: new Date().getTime(),
+                };
+                keystrokes.push(keystroke);
+            }
+
+            function resetTypingBox() {
+                const typingBox = document.getElementById("textInput");
+                typingBox.value = "";
+                typingBox.focus();
+            }
+
+            // Function to make the rectangle draggable
+            function makeDraggable(element) {
+                let pos1 = 0,
+                    pos2 = 0,
+                    pos3 = 0,
+                    pos4 = 0;
+
+                element.onmousedown = dragMouseDown;
+
+                function dragMouseDown(e) {
+                    e = e || window.event;
+                    e.preventDefault();
+
+                    // Ignore the drag if the resize handle is being clicked
+                    if (e.target.className === "resize-handle") {
+                        return;
+                    }
+
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    document.onmouseup = closeDragElement;
+                    document.onmousemove = elementDrag;
+                }
+
+                function elementDrag(e) {
+                    e = e || window.event;
+                    e.preventDefault();
+                    pos1 = pos3 - e.clientX;
+                    pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    element.style.top = element.offsetTop - pos2 + "px";
+                    element.style.left = element.offsetLeft - pos1 + "px";
+                }
+
+                function closeDragElement() {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                }
+            }
+
+            // Function to make the rectangle resizable
+            function makeResizable(element) {
+                let handle = document.createElement("div");
+                handle.className = "resize-handle";
+                element.appendChild(handle);
+
+                handle.onmousedown = resizeMouseDown;
+
+                function resizeMouseDown(e) {
+                    e = e || window.event;
+                    e.preventDefault();
+                    let startX = e.clientX;
+                    let startY = e.clientY;
+                    let startWidth = parseInt(
+                        document.defaultView.getComputedStyle(element).width,
+                        10
+                    );
+                    let startHeight = parseInt(
+                        document.defaultView.getComputedStyle(element).height,
+                        10
+                    );
+
+                    document.onmousemove = elementResize;
+                    document.onmouseup = closeResizeElement;
+
+                    function elementResize(e) {
+                        e = e || window.event;
+                        e.preventDefault();
+                        let width = startWidth + e.clientX - startX;
+                        let height = startHeight + e.clientY - startY;
+                        element.style.width = width + "px";
+                        element.style.height = height + "px";
+                    }
+
+                    function closeResizeElement() {
+                        document.onmouseup = null;
+                        document.onmousemove = null;
+                    }
+                }
+            }
+
+            function displayRandomWords() {
+                rectangle = document.getElementById("rectangle");
+                const textColorInput =
+                    document.getElementById("text-color-input");
+                const numText = document.getElementById("numText");
+                rectangle.style.color = textColorInput.value;
+                rectangle.innerText = getRandomWords(numText.value);
+                makeDraggable(rectangle);
+                makeResizable(rectangle);
+            }
+
+            // Function to handle color input and update the rectangle color
+            function handleColorInput() {
+                const colorInput = document.getElementById("colorInput");
+                const rectangle = document.getElementById("rectangle");
+                rectangle.style.backgroundColor = colorInput.value;
+            }
+
+            function handleTextInput() {
+                let textInputWrapper =
+                    document.getElementById("textInputWrapper");
+                let textInput = document.getElementById("textInput");
+                let text = document.getElementById("text");
+
+                textInput.addEventListener("keydown", function (event) {
+                    if (event.key === "Enter") {
+                        event.preventDefault();
+                        resetTypingBox();
+                        displayRandomWords();
+                    }
+                });
+
+                textInputWrapper.addEventListener("dblclick", function () {
+                    textInput.disabled = false;
+                    textInput.focus();
+                });
+
+                textInput.addEventListener("blur", function () {
+                    textInput.disabled = true;
+                });
+
+                makeDraggable(textInputWrapper);
+                makeResizable(textInputWrapper);
+            }
+
+            const textColorInput = document.getElementById("text-color-input");
+            textColorInput.addEventListener("change", displayRandomWords);
+
+            const colorInput = document.getElementById("colorInput");
+            colorInput.addEventListener("change", handleColorInput);
+
+            const numText = document.getElementById("numText");
+            numText.addEventListener("change", displayRandomWords);
+
+            // Initialize the resizable and draggable rectangle and text input
+            let rectangle = document.getElementById("rectangle");
+            makeDraggable(rectangle);
+            makeResizable(rectangle);
+            handleTextInput();
+
+            const loadDictionaryBtn = document.getElementById(
+                "load-dictionary-btn"
+            );
+            loadDictionaryBtn.addEventListener("click", () => {
+                loadDictionaryFromFile(displayRandomWords);
+            });
+
+            //
+            // TYPING DISPLAY CODE END ----------------------------------
+
+
+            // PATTERN CODE ----------------------------------
+            //
+
             let numLayers = 8;
             let length = 100;
             let height = 100;
@@ -610,6 +891,9 @@
                 stopAnimation();
                 startAnimation();
             });
+
+            //
+            // PATTERN CODE END ----------------------------------
 
             // Initial setup
             updateCanvasSize();
