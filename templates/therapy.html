@@ -646,13 +646,14 @@
             }
 
             function drawRightChevron(row, speed) {
-                const yCenter = ((canvas.height/cRows) * row) + 100;
-                const nChevrons = 22;
-                const spacing = 70;
+                const yCenter = ((canvas.height/cRows) * row) + ((canvas.height / cRows) / 2);
+                const nChevrons = 2 * (canvas.width / chevron.width);
+                let spacing = (chevron.width);
                 const time = speed * Date.now();
 
-                for (let i = 0; i < nChevrons; i++){
-                    const xCenter = ((canvas.height/2) + (time / 10) + i * (canvas.width + spacing)) % canvas.width; 
+
+                for (let i = 0; i < nChevrons - 1; i++){ 
+                    const xCenter = ((canvas.height / 2) + (time / 10) + i * (canvas.width + spacing)) % (canvas.width);
                     ctx.beginPath();
                     ctx.moveTo(xCenter, yCenter);
                     ctx.lineWidth = 5;
@@ -674,13 +675,13 @@
             }
 
             function drawLeftChevron(row, speed) {
-                const yCenter = ((canvas.height/cRows) * row) + 100;
-                const nChevrons = 22;
-                const spacing = 70;
+                const yCenter = ((canvas.height/cRows) * row) + ((canvas.height / cRows) / 2);
+                const nChevrons = 2 * (canvas.width / chevron.width);
+                let spacing = (chevron.width);
                 const time = (speed) * Date.now();
                 // const tWidth = nChevrons * (chevron.width + spacing);
                 // const offset = (canvas.width + spacing) - ((time) % tWidth);
-                for (let i = 0; i < nChevrons; i++){
+                for (let i = 0; i < nChevrons - 1; i++){
                     const xCenter = canvas.width - ((canvas.height / 2) + (time / 10) + i * (canvas.width + spacing)) % canvas.width;
                     ctx.beginPath();
                     ctx.moveTo(xCenter, yCenter);
