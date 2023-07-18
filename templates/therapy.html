@@ -526,17 +526,14 @@
 
 
             function drawCheckerboardUp(){
-                const patternWidth = (numUnits) * height;
-                offset = (offset - (Date.now() * animationSpeed * 0.1)) % (patternWidth);
 
-                if (offset < 0){
-                    offset += patternWidth
-                }
+                const patternWidth = (numUnits) * height;
+                offset = (offset + ( animationSpeed * 0.1 * 0.1)) % patternWidth;
                 
                 for (let j = 0; j < numUnits; j++) {
                     for (let i = 0; i < numUnits; i++) {
                         const x = i * length;
-                        const y = ((j * height + offset) % patternWidth) % patternWidth;
+                        const y = ((j * height - offset) % patternWidth);
 
                         if ((i + j) % 2 === 0) {
                             drawSquare(x, y, color);
@@ -561,11 +558,44 @@
                     canvasHeight
                 );
                 
+                
             }
 
 
             function drawCheckerboardDown() {
+
                 const patternWidth = (numUnits) * height;
+                offset = (offset + (animationSpeed * 0.1 * 0.1)) % (patternWidth);
+                
+                for (let j = 0; j < numUnits; j++) {
+                    for (let i = 0; i < numUnits; i++) {
+                        const x = i * length;
+                        const y = ((j * height + offset) % patternWidth);
+
+                        if ((i + j) % 2 === 0) {
+                            drawSquare(x, y, color);
+                        } else {
+                            drawSquare(x, y, backgroundColor);
+                        }
+                    }
+                }
+
+                // Draw rectangles to cover the sides based on pattern width
+                ctx.fillStyle = backgroundColor;
+                ctx.fillRect(
+                    0,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+                ctx.fillRect(
+                    window.innerWidth - (window.innerWidth - patternWidth) / 2,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+                
+                /* const patternWidth = (numUnits) * height;
                 offset = (offset + (Date.now() * animationSpeed * 0.1)) % (patternWidth);
 
                 if (offset < 0){
@@ -599,6 +629,7 @@
                     (window.innerWidth - patternWidth) / 2,
                     canvasHeight
                 );
+                */
                 
             }
 
