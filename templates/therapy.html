@@ -567,7 +567,7 @@
                 const patternWidth = (numUnits) * height;
                 offset = (offset + (animationSpeed * 0.1 * 0.1)) % (patternWidth);
                 
-                for (let j = 0; j < numUnits; j++) {
+                for (let j = 0; j < numLayers; j++) {
                     for (let i = 0; i < numUnits; i++) {
                         const x = i * length;
                         const y = ((j * height + offset) % patternWidth);
@@ -859,9 +859,12 @@
                     updatePattern();
 
                     if (direction == 'left' && patternType == "checkerboard"){
-                        offset -= animationSpeed; 
-                    } else if (direction == 'down' && patternType == "chevron") {
+                        // offset -= animationSpeed; 
                         offset -= animationSpeed;
+                    } else if (direction == 'down' && patternType == "chevron") {
+                        // offset -= animationSpeed;
+                        offset += animationSpeed;
+
                     } else{
                         offset += animationSpeed; // Adjust the speed of the animation by changing this value
                     }
