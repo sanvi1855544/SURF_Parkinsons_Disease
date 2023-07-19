@@ -490,14 +490,21 @@
 
 
             function drawCheckerboardLeft() {
-                const patternWidth = (numUnits + 100) * length;
-                offset = (offset - animationSpeed) % (patternWidth);
+            
+                const patternWidth = (numUnits) * length;
+                offset = (offset - animationSpeed) % patternWidth;
+                if (offset < 0){
+                    offset -= patternWidth;
+                }
                 for (let j = 0; j < numLayers; j++) {
-                    for (let i = 1; i < numUnits + 100; i++) {
-                        const x = (i * length + offset) % patternWidth;
+                    for (let i = 1; i <= numUnits + 101; i++) {
+                        const x = ((i * length + offset) % patternWidth);
+
+                        /*
                         if ( x < 0 ){
                             offset += patternWidth;
                         }
+                        */
                         const y = j * height;
 
                         if ((i + j) % 2 === 0) {
