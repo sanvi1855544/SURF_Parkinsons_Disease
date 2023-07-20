@@ -91,5 +91,13 @@ def survey():
 def therapy():
     return render_template('therapy.html')
 
+@app.route("/words")
+def words():
+    return render_template('words.txt')
+
+@app.route("/sentences")
+def sentences():
+    return render_template('sentences.txt')
+
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)

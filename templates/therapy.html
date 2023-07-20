@@ -54,7 +54,7 @@
             #rectangle {
                 width: 500px;
                 height: 300px;
-                background-color: blue;
+                background-color: black;
                 position: absolute;
                 top: 200px;
                 left: 900px;
@@ -83,6 +83,7 @@
                 padding: 0;
                 margin: 0;
                 font-size: 14px;
+                background-color: black;
             }
 
             .resize-handle {
@@ -168,13 +169,26 @@
             <label for="colorInput">Rectangle Color:</label>
             <input type="color" id="colorInput" />
 
+            <label for="text-source">Text source:</label>
+            <select id="text-source">
+                <option value="words">Words</option>
+                <option value="sentences">Sentences</option>
+            </select>
+
             <label for="numText">Number of Words/Sentences:</label>
             <input type="number" id="numText" min="1" max="100" value="8" />
 
             <label for="text-color-input">Text Color:</label>
-            <input type="color" id="text-color-input" value="#f0f0f0" />
+            <input type="color" id="text-color-input" value="#ffffff" />
 
-            <button id="load-dictionary-btn">Load Dictionary</button>
+            <label for="font-size-input">Font Size:</label>
+            <input type="number" id="font-size-input" value="16">
+
+            <label for="bold-toggle">Bold:</label>
+            <input type="checkbox" id="bold-toggle">
+
+            <label for="transparency-toggle">Transparent Rectangle:</label>
+            <input type="checkbox" id="transparency-toggle">
 
             <button id="updateBtn">Enter</button>
         </div>
@@ -200,29 +214,20 @@
 
             let keystrokes = [];
             let dictionary = [];
+            let isTransparent = false;
 
-            function loadDictionaryFromFile(callback) {
-                const fileInput = document.createElement("input");
-                fileInput.type = "file";
-                fileInput.accept = ".txt";
-
-                fileInput.addEventListener("change", (event) => {
-                    const file = event.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            const fileContent = e.target.result;
-                            dictionary = fileContent
-                                .split("\n")
-                                .map((word) => word.trim())
-                                .filter((word) => word !== "");
-                            callback();
-                        };
-                        reader.readAsText(file);
-                    }
-                });
-
-                fileInput.click();
+            function loadDictionaryFromFile() {
+                txtsource = document.getElementById("text-source").value;
+                fetch('http://127.0.0.1:5000/' + txtsource) // Fetch the txt file
+                    .then(response => response.text())
+                    .then(words => {
+                        dictionary = words.split('\n').map(word => word.trim()).filter(word => word !== '');
+                        displayRandomWords();
+                    })
+                    .catch(error => {
+                        console.error('Error loading the dictionary:', error);
+                        // If there's an error fetching the file, you can provide a default dictionary or handle the error as needed.
+                    });
             }
 
             function getRandomWords(numWords) {
@@ -334,10 +339,18 @@
 
             function displayRandomWords() {
                 rectangle = document.getElementById("rectangle");
+                const txtbox = document.getElementById("textInput")
                 const textColorInput =
                     document.getElementById("text-color-input");
                 const numText = document.getElementById("numText");
+                const fontSizeInput = document.getElementById("font-size-input");
+                const boldToggle = document.getElementById("bold-toggle");
                 rectangle.style.color = textColorInput.value;
+                rectangle.style.fontSize = fontSizeInput.value + "px";
+                rectangle.style.fontWeight = boldToggle.checked ? "bold" : "normal";
+                txtbox.style.color = textColorInput.value;
+                txtbox.style.fontSize = fontSizeInput.value + "px";
+                txtbox.style.fontWeight = boldToggle.checked ? "bold" : "normal";
                 rectangle.innerText = getRandomWords(numText.value);
                 makeDraggable(rectangle);
                 makeResizable(rectangle);
@@ -345,9 +358,16 @@
 
             // Function to handle color input and update the rectangle color
             function handleColorInput() {
-                const colorInput = document.getElementById("colorInput");
                 const rectangle = document.getElementById("rectangle");
+                const txtbox = document.getElementById("textInput")
+                if (isTransparent) {
+                    rectangle.style.backgroundColor = "transparent";
+                    txtbox.style.backgroundColor = "transparent";
+                    return
+                }
+                const colorInput = document.getElementById("colorInput");
                 rectangle.style.backgroundColor = colorInput.value;
+                txtbox.style.backgroundColor = colorInput.value;
             }
 
             function handleTextInput() {
@@ -392,12 +412,26 @@
             makeResizable(rectangle);
             handleTextInput();
 
-            const loadDictionaryBtn = document.getElementById(
-                "load-dictionary-btn"
-            );
-            loadDictionaryBtn.addEventListener("click", () => {
-                loadDictionaryFromFile(displayRandomWords);
+            // Add event listener to the transparency toggle checkbox
+            const transparencyToggle = document.getElementById("transparency-toggle");
+            transparencyToggle.addEventListener("change", () => {
+                isTransparent = transparencyToggle.checked;
+                handleColorInput();
             });
+
+            // Add event listener to the font size input
+            const fontSizeInput = document.getElementById("font-size-input");
+            fontSizeInput.addEventListener("input", displayRandomWords);
+
+            // Add event listener to the bold toggle checkbox
+            const boldToggle = document.getElementById("bold-toggle");
+            boldToggle.addEventListener("change", displayRandomWords);
+
+            // Add event listener to the text source
+            const textSource = document.getElementById("text-source");
+            textSource.addEventListener("change", loadDictionaryFromFile);
+
+            loadDictionaryFromFile();
 
             //
             // TYPING DISPLAY CODE END ----------------------------------
