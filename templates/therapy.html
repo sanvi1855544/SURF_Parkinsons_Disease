@@ -241,6 +241,8 @@
                 return randomWords.join(" ");
             }
 
+            let allKeystrokes = [];
+
             function recordKeystroke(event) {
                 const keystroke = {
                     key: event.key,
@@ -249,9 +251,33 @@
                 keystrokes.push(keystroke);
             }
 
+            function toCSV(keystrokes){
+                let csvFile = 'keystroke,timestamp\n';
+                for (const keystroke of keystrokes) {
+                    csvFile += '${keystroke.key},${new Date(keystroke.timestamp).toISOString()}\n';
+                }
+                return csvFile;
+            }
+
+            function loadCSV() {
+                const data = toCSV(keystrokes);
+                const binaryLargeData = new Blob([data], { type: 'text/csv' });
+                const url = URL.createObjectURL(binaryLargeData);
+
+                const file = document.createElement('a');
+                file.href = url;
+                file.download = 'keystrokes_log.csv';
+                file.click();
+
+                URL.revokeObjectURL(url);
+            }
+
             function resetTypingBox() {
+                loadCSV();
                 const typingBox = document.getElementById("textInput");
                 typingBox.value = "";
+                allKeystrokes.push(...keystrokes);
+                keystrokes = [];
                 typingBox.focus();
             }
 
@@ -396,6 +422,8 @@
                 makeDraggable(textInputWrapper);
                 makeResizable(textInputWrapper);
             }
+
+            document.addEventListener('keydown', recordKeystroke);
 
             const textColorInput = document.getElementById("text-color-input");
             textColorInput.addEventListener("change", displayRandomWords);
