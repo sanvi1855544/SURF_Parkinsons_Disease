@@ -241,6 +241,7 @@
                 return randomWords.join(" ");
             }
 
+
             let allKeystrokes = [];
 
             function recordKeystroke(event) {
@@ -254,7 +255,7 @@
             function toCSV(keystrokes){
                 let csvFile = 'keystroke,timestamp\n';
                 for (const keystroke of keystrokes) {
-                    csvFile += '${keystroke.key},${new Date(keystroke.timestamp).toISOString()}\n';
+                    csvFile += `${keystroke.key},${new Date(keystroke.timestamp).toISOString()}\n`;
                 }
                 return csvFile;
             }
