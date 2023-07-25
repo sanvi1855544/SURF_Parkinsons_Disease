@@ -191,6 +191,7 @@
             <input type="checkbox" id="transparency-toggle">
 
             <button id="updateBtn">Enter</button>
+            <button id="submit">Submit</button>
         </div>
 
         <div id="rectangle">
@@ -274,12 +275,15 @@
             }
 
             function resetTypingBox() {
-                loadCSV();
                 const typingBox = document.getElementById("textInput");
                 typingBox.value = "";
-                allKeystrokes.push(...keystrokes);
-                keystrokes = [];
                 typingBox.focus();
+            }
+
+            function submitCSV(){
+                loadCSV();
+                allKeystrokes.push(...keystrokes);
+             
             }
 
             // Function to make the rectangle draggable
@@ -409,6 +413,7 @@
                         resetTypingBox();
                         displayRandomWords();
                     }
+
                 });
 
                 textInputWrapper.addEventListener("dblclick", function () {
@@ -994,6 +999,10 @@
             document
                 .getElementById("updateBtn")
                 .addEventListener("click", updateVariables);
+            
+            document
+                .getElementById("submit")
+                .addEventListener("click", submitCSV);
 
             // Resize canvas and start animation when the window is resized
             window.addEventListener("resize", function () {
