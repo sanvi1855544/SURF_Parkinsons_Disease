@@ -245,18 +245,26 @@
 
             let allKeystrokes = [];
 
+            let lastTimestamp = null;
+
             function recordKeystroke(event) {
                 const keystroke = {
                     key: event.key,
                     timestamp: new Date().getTime(),
                 };
+
+                if (lastTimestamp != null){
+                    keystroke.timeDiff = keystroke.timestamp - lastTimestamp;
+                }
+                lastTimestamp = keystroke.timestamp;
+
                 keystrokes.push(keystroke);
             }
 
             function toCSV(keystrokes){
-                let csvFile = 'keystroke,timestamp\n';
+                let csvFile = 'keystroke,timestamp,timeDiff\n';
                 for (const keystroke of keystrokes) {
-                    csvFile += `${keystroke.key},${new Date(keystroke.timestamp).toISOString()}\n`;
+                    csvFile += `${keystroke.key},${new Date(keystroke.timestamp).toISOString()},${keystroke.timeDiff || ''}\n`;
                 }
                 return csvFile;
             }
