@@ -247,24 +247,39 @@
 
             let lastTimestamp = null;
 
+            let lastKeystroke = null;
+
             function recordKeystroke(event) {
-                const keystroke = {
-                    key: event.key,
-                    timestamp: new Date().getTime(),
-                };
+                if (event.type === 'keydown'){
+                    const keystroke = {
+                        key: event.key,
+                        pTimestamp: new Date().getTime(),
+                        rTimestamp: null,
+                    };
 
-                if (lastTimestamp != null){
-                    keystroke.timeDiff = keystroke.timestamp - lastTimestamp;
+                    keystrokes.push(keystroke);
+                    lastKeystroke = keystroke;
+    
+                    if (lastTimestamp != null){
+                        keystroke.timeDiff = keystroke.pTimestamp - lastTimestamp;
+                    }
+                    
+                    lastTimestamp = keystroke.pTimestamp;
+    
+                    
+
+                } else if (event.type === 'keyup' && lastKeystroke){
+                    lastKeystroke.rTimestamp = new Date().getTime(); 
+                    lastKeystroke.holdTime = lastKeystroke.rTimestamp - lastKeystroke.pTimestamp;
+                    lastKeystroke = null;
                 }
-                lastTimestamp = keystroke.timestamp;
-
-                keystrokes.push(keystroke);
+                
             }
 
             function toCSV(keystrokes){
-                let csvFile = 'keystroke,timestamp,timeDiff\n';
+                let csvFile = 'keystroke,pTimestamp,rTimestamp, holdTime,timeDiff\n';
                 for (const keystroke of keystrokes) {
-                    csvFile += `${keystroke.key},${new Date(keystroke.timestamp).toISOString()},${keystroke.timeDiff || ''}\n`;
+                    csvFile += `${keystroke.key},${new Date(keystroke.pTimestamp).toISOString()},${new Date(keystroke.rTimestamp).toISOString() || ''},${keystroke.holdTime || ''},${keystroke.timeDiff || ''}\n`;
                 }
                 return csvFile;
             }
@@ -438,6 +453,7 @@
             }
 
             document.addEventListener('keydown', recordKeystroke);
+            document.addEventListener('keyup', recordKeystroke);
 
             const textColorInput = document.getElementById("text-color-input");
             textColorInput.addEventListener("change", displayRandomWords);
