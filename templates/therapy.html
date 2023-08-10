@@ -192,6 +192,7 @@
 
             <button id="updateBtn">Enter</button>
             <button id="submit">Submit</button>
+            <button id="stop">Stop</button>
         </div>
 
         <div id="rectangle">
@@ -249,6 +250,8 @@
 
             let lastKeystroke = null;
 
+            let error = 0; 
+
             function recordKeystroke(event) {
                 if (event.type === 'keydown'){
                     const keystroke = {
@@ -261,7 +264,7 @@
                     lastKeystroke = keystroke;
     
                     if (lastTimestamp != null){
-                        keystroke.timeDiff = keystroke.pTimestamp - lastTimestamp;
+                        keystroke.pressToPress = keystroke.pTimestamp - lastTimestamp;
                     }
                     
                     lastTimestamp = keystroke.pTimestamp;
@@ -277,9 +280,10 @@
             }
 
             function toCSV(keystrokes){
-                let csvFile = 'keystroke,pTimestamp,rTimestamp, holdTime,timeDiff\n';
+                let csvFile = 'keystroke,pTimestamp,rTimestamp, holdTime,pressToPress\n';
                 for (const keystroke of keystrokes) {
-                    csvFile += `${keystroke.key},${new Date(keystroke.pTimestamp).toISOString()},${new Date(keystroke.rTimestamp).toISOString() || ''},${keystroke.holdTime || ''},${keystroke.timeDiff || ''}\n`;
+                    const rTimestamp = keystroke.rTimestamp ? new Date(keystroke.rTimestamp).toISOString() : '';
+                    csvFile += `${keystroke.key},${new Date(keystroke.pTimestamp).toISOString()},${rTimestamp || ''},${keystroke.holdTime || ''},${keystroke.pressToPress || ''}\n`;
                 }
                 return csvFile;
             }
@@ -513,6 +517,7 @@
             // Create canvas and context
             const canvas = document.getElementById("canvas");
             const ctx = canvas.getContext("2d");
+            ctx.fillStyle = backgroundColor;
 
             // Sine wave:
             const sineWave = {
@@ -694,42 +699,6 @@
                     (window.innerWidth - patternWidth) / 2,
                     canvasHeight
                 );
-                
-                /* const patternWidth = (numUnits) * height;
-                offset = (offset + (Date.now() * animationSpeed * 0.1)) % (patternWidth);
-
-                if (offset < 0){
-                    offset += patternWidth
-                }
-                
-                for (let j = 0; j < numUnits; j++) {
-                    for (let i = 0; i < numUnits; i++) {
-                        const x = i * length;
-                        const y = ((j * height + offset) % patternWidth) % patternWidth;
-
-                        if ((i + j) % 2 === 0) {
-                            drawSquare(x, y, color);
-                        } else {
-                            drawSquare(x, y, backgroundColor);
-                        }
-                    }
-                }
-
-                // Draw rectangles to cover the sides based on pattern width
-                ctx.fillStyle = backgroundColor;
-                ctx.fillRect(
-                    0,
-                    0,
-                    (window.innerWidth - patternWidth) / 2,
-                    canvasHeight
-                );
-                ctx.fillRect(
-                    window.innerWidth - (window.innerWidth - patternWidth) / 2,
-                    0,
-                    (window.innerWidth - patternWidth) / 2,
-                    canvasHeight
-                );
-                */
                 
             }
 
@@ -1019,6 +988,10 @@
                 startAnimation();
             }
 
+            function speedStop() {
+                animationSpeed = 0;
+            }
+
             // Event listener for the Enter button
             document
                 .getElementById("updateBtn")
@@ -1027,6 +1000,10 @@
             document
                 .getElementById("submit")
                 .addEventListener("click", submitCSV);
+
+            document
+                .getElementById("stop")
+                .addEventListener("click", speedStop)
 
             // Resize canvas and start animation when the window is resized
             window.addEventListener("resize", function () {
