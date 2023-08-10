@@ -1,0 +1,39 @@
+ 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fetch Text File and Display</title>
+    <style>
+        #text {
+            display: block;
+            text-align: center;
+            margin: 20px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Fetch and Display Text File</h1>
+
+<button id="fetchButton">Fetch Text File</button>
+<span id="text"></span>
+
+<script>
+document.getElementById('fetchButton').addEventListener('click', function() {
+    fetch('words.txt')
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById('text').textContent = data;
+    })
+    .catch(error => {
+        console.error('Error fetching the text file:', error);
+    });
+});
+</script>
+
+</body>
+</html>
