@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Keystroke Time Log</title>
+</head>
+<body>
+    <h1>Keystroke Time Log</h1>
+    <p>Press keys and see the time log below:</p>
+    <div id="keystrokeTimeLog"></div>
+    <button id="downloadButton">Download Time Log</button>
+
+    <script>
+        const keystrokeTimeLogDiv = document.getElementById('keystrokeTimeLog');
+        const downloadButton = document.getElementById('downloadButton');
+        let keystrokeTimeLog = [];
+
+        // Function to update the keystroke time log
+        function updateKeystrokeTimeLog() {
+            keystrokeTimeLogDiv.innerHTML = keystrokeTimeLog.map(entry => {
+                return `<p>${entry.timestamp}: ${entry.key}</p>`;
+            }).join('');
+        }
+
+        // Event listener for keydown event
+        document.addEventListener('keydown', (event) => {
+            const { key } = event;
+            const timestamp = new Date().toISOString();
+
+            // Store the keystroke information with timestamp
+            keystrokeTimeLog.push({
+                key,
+                timestamp,
+            });
+
+            // Update the keystroke time log display
+            updateKeystrokeTimeLog();
+        });
+
+        // Event listener for keyup event
+        document.addEventListener('keyup', (event) => {
+            // You can handle keyup events similarly if needed
+        });
+
+        // Event listener for download button
+        downloadButton.addEventListener('click', () => {
+            const data = JSON.stringify(keystrokeTimeLog, null, 2);
+            const blob = new Blob([data], { type: 'application/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'keystroke_time_log.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+</html>
