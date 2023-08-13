@@ -1,4 +1,3 @@
- 
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,11 +19,18 @@
 <h1>Fetch and Display Text File</h1>
 
 <button id="fetchButton">Fetch Text File</button>
+<label for="text-source">dictation  source:</label>
+<select id="text-source">
+    <option value="words">words</option>
+    <option value="sentences">sentences</option>
+</select>
+
 <span id="text"></span>
 
-<script>
+ <script>
 document.getElementById('fetchButton').addEventListener('click', function() {
-    fetch('words.txt')
+    var selectedSource = document.getElementById('text-source').value;
+    fetch(selectedSource + ".txt")
     .then(response => response.text())
     .then(data => {
         document.getElementById('text').textContent = data;
@@ -34,6 +40,7 @@ document.getElementById('fetchButton').addEventListener('click', function() {
     });
 });
 </script>
+
 
 </body>
 </html>
