@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Keystroke press release Logs</title>
+</head>
+<body>
+    <p>Press a key and release it to see report :</p>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Key</th>
+                <th>Press Time</th>
+                <th>Release Time</th>
+                <th>Time Difference</th>
+            </tr>
+        </thead>
+        <tbody id="logs">
+        </tbody>
+    </table>
+
+    <script>
+        const logsContainer = document.getElementById("logs");
+        const keystrokeLogs = [];
+
+        document.addEventListener("keydown", (event) => {
+            const existingLog = keystrokeLogs.find(log => log.key === event.key && log.releaseTime === null);
+            if (!existingLog) {
+                keystrokeLogs.push({ key: event.key, pressTime: new Date().getTime(), releaseTime: null });
+                updateLogs();
+            }
+        });
+
+        document.addEventListener("keyup", (event) => {
+            const matchingLog = keystrokeLogs.find(log => log.key === event.key && log.releaseTime === null);
+            if (matchingLog) {
+                matchingLog.releaseTime = new Date().getTime();
+                updateLogs();
+            }
+        });
+
+        function formatTime(milliseconds) {
+            const date = new Date(milliseconds);
+            return `${date.toLocaleTimeString()} ${date.getMilliseconds()} ms`;
+        }
+
+        function updateLogs() {
+            logsContainer.innerHTML = "";
+            keystrokeLogs.forEach(log => {
+                const row = document.createElement("tr");
+                const pressTime = log.pressTime ? formatTime(log.pressTime) : "";
+                const releaseTime = log.releaseTime ? formatTime(log.releaseTime) : "";
+                const timeDifference = log.pressTime && log.releaseTime ? (log.releaseTime - log.pressTime) + " ms" : "";
+
+                row.innerHTML = `
+                    <td>${log.key}</td>
+                    <td>${pressTime}</td>
+                    <td>${releaseTime}</td>
+                    <td>${timeDifference}</td>
+                `;
+
+                logsContainer.appendChild(row);
+            });
+        }
+        
+        
+    </script>
+    
+</body>
+</html>
