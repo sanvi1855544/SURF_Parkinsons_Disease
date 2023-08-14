@@ -1,0 +1,1106 @@
+
+<!DOCTYPE html>
+<html>
+    
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+<title> Stablehand2: Parkinson's disease </title>
+  
+<style>
+
+@import url("../static/styles drora.css");
+ <style>
+ <div>   
+      body  
+ 
+            .container {
+                text-align: left;
+                margin-left: 150px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            input[type="number"] {
+                width: 60px;
+                padding: 5px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+            }
+
+            input[type="color"] {
+                padding: 5px;
+                margin-bottom: 10px;
+            }
+
+            button {
+                padding: 10px 20px;
+                background-color: #4caf50;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            #rectangle {
+    width: 500px;
+    height: 300px;
+    background-color: #FFF0CA;
+    position: absolute;
+/*      style="float: left;margin: 40px;">*/
+    top: 317px;
+    left: 923px;
+    cursor: move;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #070000;
+    overflow: scroll;
+    clip: rect(auto,auto,auto,1000);
+            }
+
+            #textInputWrapper {
+    position: absolute;
+    top: 651px;
+    left: 930px;
+    width: 486px;
+    height: 164px;
+    cursor: move;
+    background-color: #FFF0CA;
+    overflow: scroll;
+            }
+
+            #textInput {
+                width: 100%;
+                height: 100%;
+                resize: none;
+                border: none;
+                outline: none;
+                padding: 0;
+                margin: 0;
+                font-size: 14px;
+            }
+
+            .resize-handle {
+                width: 10px;
+                height: 10px;
+                background: white;
+                border: 1px solid black;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                cursor: se-resize;
+                pointer-events: auto; /* Ensure the resize handle receives the mouse events */
+            }
+        </style>
+<link href="../static/bootstrap-4.4.1.css" rel="stylesheet" type="text/css">
+    </head>
+        
+        
+<div class = "nav">
+       
+        <p><a href="{{ url_for('index') }}">Home</a></p>
+        <p><a href="{{ url_for('survey') }}">Survey</a></p>
+        <p><a href="{{ url_for('instructions') }}">Instructions</a></p>
+        <p><a href="{{ url_for('contact') }}">Contact</a></p>
+        <p><a href="{{ url_for('register') }}">Register</a></p>
+        <p><a href="{{ url_for('login') }}">Login</a></p>
+</div>
+        <div class="align-content-end"><img src="../static/caltech_logo.png" width="154" height="37" alt="giffin" class="align-content-end"/></div>
+<body>
+<div class="align-self-lg-auto" role="group" aria-label="menu setup button group">
+            <h3>BackGround Set Up  &nbsp; &nbsp;</h3>
+            <label for="numLayers">Layers:</label>
+            <input type="number" id="numLayers" min="1" max="100" value="8" />
+
+            <label for="length">Length:</label>
+            <input type="number" id="length" min="10" max="200" value="100" />
+
+            <label for="height">Height:</label>
+            <input type="number" id="height" min="10" max="200" value="100" />
+
+            <label for="sineRows">Sine Rows:</label>
+            <input type="number" id="sineRows" min="1" max="8" value="4" />
+
+            <label for="sineAmplitude">Sine Amplitude:</label>
+            <input type="number" id="sineAmplitude" min="10" max="100" value="50" />
+
+            <label for="direction">Direction:</label>
+            <select id="direction">
+                <option value="right">Right</option>
+                <option value="left">Left</option>
+                <option value="up">Up</option>
+                <option value="down">Down</option>
+            </select>
+
+
+            <label for="animationSpeed">Animation Speed:</label>
+            <input
+                type="number"
+                id="animationSpeed"
+                min="1"
+                max="10"
+                value="2"
+            />
+
+            <label for="color">Color:</label>
+            <input type="color" id="color" value="#000000" />
+
+            <label for="backgroundColor">Background Color:</label>
+            <input type="color" id="backgroundColor" value="#f0f0f0" />
+
+            <label for="patternType">Pattern Type:</label>
+            <select id="patternType">
+                <option value="none">None</option>
+                <option value="checkerboard">Checkerboard</option>
+                <option value="sine">Sine</option>
+                <option value="chevron">Chevron</option>
+            </select>
+
+
+            <label for="patternWidth">Pattern Width:</label>
+            <input
+                type="number"
+                id="patternWidth"
+                min="0"
+                max="3456"
+                value="1500"
+            />
+ <button id="updateBtn">Enter</button>
+</div>
+<div class="align-self-lg-auto" role="group"  aria-label="typing  button group">
+               <h3>Typing Set Up </h3>
+            <label for="colorInput">Rectangle Color:</label>
+            <input type="color" id="colorInput" />
+
+            <label for="text-source">dictation  source:</label>
+            <select id="text-source">
+                <option value="words">Words</option>
+                <option value="sentences">Sentences</option>
+            </select>
+
+            <label for="numText">Number of Words/Sentences:</label>
+            <input type="number" id="numText" min="1" max="100" value="8" />
+
+            <label for="text-color-input">Text Color:</label>
+            <input type="color" id="text-color-input" value="#0F0D0D" />
+
+            <label for="font-size-input">Font Size:</label>
+            <input type="number" id="font-size-input" value="16">
+
+            <label for="bold-toggle">Bold:</label>
+            <input type="checkbox" id="bold-toggle">
+
+            <label for="transparency-toggle">Transparent Rectangle:</label>
+            <input type="checkbox" id="transparency-toggle">
+
+              <button id="fetchButton">Fetch Text File</button>
+  
+        </div>
+
+ 
+        
+<div class="align-content-lg-end" id="rectangle">
+       
+      <div class="resize-handle"></div>
+        <span id="text">Centered Text</span>
+</div>
+ 
+<div id="textInputWrapper">
+  <h3>Type Here </h3> <div> <button id="submit">Submit</button></div>
+          <textarea
+                id="textInput"
+                placeholder="Double Click to Type"
+            ></textarea>
+    
+  
+</div>
+
+<canvas id="canvas" position:absolute; height:100%; width:100%;></canvas>
+<script src="../static/bootstrap-4.4.1.js"></script>
+  
+<script>
+
+            // TYPING DISPLAY CODE ----------------------------------
+            //
+
+            let keystrokes = [];
+            let dictionary = [];
+            let isTransparent = false;
+    
+   
+ 
+
+   function loadDictionaryFromFile() {
+       
+                txtsource = document.getElementById("text-source").value;
+                var selectedSource = document.getElementById('text-source').value;
+    fetch(selectedSource + ".txt")
+                    .then(response => response.text())
+                    .then(words => {
+                        dictionary = words.split('\n').map(word => word.trim()).filter(word => word !== '');
+                        displayRandomWords();
+                    })
+                    .catch(error => {
+                        console.error('Error loading the dictionary:', error);
+                        // If there's an error fetching the file, you can provide a default dictionary or handle the error as needed.
+                    });
+            }
+
+
+              
+  /*function loadDictionaryFromFile(callback) {
+                const fileInput = document.createElement("input");
+                fileInput.type = "file";
+                fileInput.accept = ".txt";
+
+                fileInput.addEventListener("change", (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            const fileContent = e.target.result;
+                            dictionary = fileContent
+                                .split("\n")
+                                .map((word) => word.trim())
+                                .filter((word) => word !== "");
+                            callback();
+                        };
+                        reader.readAsText(file);
+                    }
+                });
+
+                fileInput.click();
+            }*/
+//            function loadDictionaryFromFile() {
+//                txtsource = document.getElementById("text-source").value;
+//                fetch('http://127.0.0.1:54228/preview/app//' + txtsource) // Fetch the txt file
+//                    .then(response => response.text())
+//                    .then(words => {
+//                        dictionary = words.split('\n').map(word => word.trim()).filter(word => word !== '');
+//                        displayRandomWords();
+//                    })
+//                    .catch(error => {
+//                        console.error('Error loading the dictionary:', error);
+//                        // If there's an error fetching the file, you can provide a default dictionary or handle the error as needed.
+//                    });
+//            }
+
+            function getRandomWords(numWords) {
+                let randomWords = [];
+                for (let i = 0; i < numWords; i++) {
+                    const randomIndex = Math.floor(
+                        Math.random() * dictionary.length
+                    );
+                    randomWords.push(dictionary[randomIndex]);
+                }
+                return randomWords.join(" ");
+            }
+
+
+            let allKeystrokes = [];
+
+            let lastTimestamp = null;
+
+            let lastKeystroke = null;
+
+            function recordKeystroke(event) {
+                if (event.type === 'keydown'){
+                    const keystroke = {
+                        key: event.key,
+                        pTimestamp: new Date().getTime(),
+                        rTimestamp: null,
+                    };
+
+                    keystrokes.push(keystroke);
+                    lastKeystroke = keystroke;
+    
+                    if (lastTimestamp != null){
+                        keystroke.timeDiff = keystroke.pTimestamp - lastTimestamp;
+                    }
+                    
+                    lastTimestamp = keystroke.pTimestamp;
+    
+                    
+
+                } else if (event.type === 'keyup' && lastKeystroke){
+                    lastKeystroke.rTimestamp = new Date().getTime(); 
+                    lastKeystroke.holdTime = lastKeystroke.rTimestamp - lastKeystroke.pTimestamp;
+                    lastKeystroke = null;
+                }
+                
+            }
+
+            function toCSV(keystrokes){
+                let csvFile = 'keystroke,pTimestamp,rTimestamp, holdTime,timeDiff\n';
+                for (const keystroke of keystrokes) {
+                    csvFile += `${keystroke.key},${new Date(keystroke.pTimestamp).toISOString()},${new Date(keystroke.rTimestamp).toISOString() || ''},${keystroke.holdTime || ''},${keystroke.timeDiff || ''}\n`;
+                }
+                return csvFile;
+            }
+
+            function loadCSV() {
+                const data = toCSV(keystrokes);
+                const binaryLargeData = new Blob([data], { type: 'text/csv' });
+                const url = URL.createObjectURL(binaryLargeData);
+
+                const file = document.createElement('a');
+                file.href = url;
+                file.download = 'keystrokes_log.csv';
+                file.click();
+
+                URL.revokeObjectURL(url);
+            }
+
+            function resetTypingBox() {
+                const typingBox = document.getElementById("textInput");
+                typingBox.value = "";
+                typingBox.focus();
+            }
+
+            function submitCSV(){
+                loadCSV();
+                allKeystrokes.push(...keystrokes);
+             
+            }
+
+            // Function to make the rectangle draggable
+            function makeDraggable(element) {
+                let pos1 = 0,
+                    pos2 = 0,
+                    pos3 = 0,
+                    pos4 = 0;
+
+                element.onmousedown = dragMouseDown;
+
+                function dragMouseDown(e) {
+                    e = e || window.event;
+                    e.preventDefault();
+
+                    // Ignore the drag if the resize handle is being clicked
+                    if (e.target.className === "resize-handle") {
+                        return;
+                    }
+
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    document.onmouseup = closeDragElement;
+                    document.onmousemove = elementDrag;
+                }
+
+                function elementDrag(e) {
+                    e = e || window.event;
+                    e.preventDefault();
+                    pos1 = pos3 - e.clientX;
+                    pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    element.style.top = element.offsetTop - pos2 + "px";
+                    element.style.left = element.offsetLeft - pos1 + "px";
+                }
+
+                function closeDragElement() {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                }
+            }
+
+            // Function to make the rectangle resizable
+            function makeResizable(element) {
+                let handle = document.createElement("div");
+                handle.className = "resize-handle";
+                element.appendChild(handle);
+
+                handle.onmousedown = resizeMouseDown;
+
+                function resizeMouseDown(e) {
+                    e = e || window.event;
+                    e.preventDefault();
+                    let startX = e.clientX;
+                    let startY = e.clientY;
+                    let startWidth = parseInt(
+                        document.defaultView.getComputedStyle(element).width,
+                        10
+                    );
+                    let startHeight = parseInt(
+                        document.defaultView.getComputedStyle(element).height,
+                        10
+                    );
+
+                    document.onmousemove = elementResize;
+                    document.onmouseup = closeResizeElement;
+
+                    function elementResize(e) {
+                        e = e || window.event;
+                        e.preventDefault();
+                        let width = startWidth + e.clientX - startX;
+                        let height = startHeight + e.clientY - startY;
+                        element.style.width = width + "px";
+                        element.style.height = height + "px";
+                    }
+
+                    function closeResizeElement() {
+                        document.onmouseup = null;
+                        document.onmousemove = null;
+                    }
+                }
+            }
+
+            function displayRandomWords() {
+                rectangle = document.getElementById("rectangle");
+                const txtbox = document.getElementById("textInput")
+                const textColorInput =
+                    document.getElementById("text-color-input");
+                const numText = document.getElementById("numText");
+                const fontSizeInput = document.getElementById("font-size-input");
+                const boldToggle = document.getElementById("bold-toggle");
+                rectangle.style.color = textColorInput.value;
+                rectangle.style.fontSize = fontSizeInput.value + "px";
+                rectangle.style.fontWeight = boldToggle.checked ? "bold" : "normal";
+                txtbox.style.color = textColorInput.value;
+                txtbox.style.fontSize = fontSizeInput.value + "px";
+                txtbox.style.fontWeight = boldToggle.checked ? "bold" : "normal";
+                rectangle.innerText = getRandomWords(numText.value);
+                makeDraggable(rectangle);
+                makeResizable(rectangle);
+            }
+
+            // Function to handle color input and update the rectangle color
+            function handleColorInput() {
+                const rectangle = document.getElementById("rectangle");
+                const txtbox = document.getElementById("textInput")
+                if (isTransparent) {
+                    rectangle.style.backgroundColor = "transparent";
+                    txtbox.style.backgroundColor = "transparent";
+                    return
+                }
+                const colorInput = document.getElementById("colorInput");
+                rectangle.style.backgroundColor = colorInput.value;
+                txtbox.style.backgroundColor = colorInput.value;
+            }
+
+            function handleTextInput() {
+                let textInputWrapper =
+                    document.getElementById("textInputWrapper");
+                let textInput = document.getElementById("textInput");
+                let text = document.getElementById("text");
+
+                textInput.addEventListener("keydown", function (event) {
+                    if (event.key === "Enter") {
+                        event.preventDefault();
+                        resetTypingBox();
+                        displayRandomWords();
+                    }
+
+                });
+
+                textInputWrapper.addEventListener("dblclick", function () {
+                    textInput.disabled = false;
+                    textInput.focus();
+                });
+
+                textInput.addEventListener("blur", function () {
+                    textInput.disabled = true;
+                });
+
+                makeDraggable(textInputWrapper);
+                makeResizable(textInputWrapper);
+            }
+
+            document.addEventListener('keydown', recordKeystroke);
+            document.addEventListener('keyup', recordKeystroke);
+
+            const textColorInput = document.getElementById("text-color-input");
+            textColorInput.addEventListener("change", displayRandomWords);
+
+            const colorInput = document.getElementById("colorInput");
+            colorInput.addEventListener("change", handleColorInput);
+
+            const numText = document.getElementById("numText");
+            numText.addEventListener("change", displayRandomWords);
+
+            // Initialize the resizable and draggable rectangle and text input
+            let rectangle = document.getElementById("rectangle");
+            makeDraggable(rectangle);
+            makeResizable(rectangle);
+            handleTextInput();
+
+            // Add event listener to the transparency toggle checkbox
+            const transparencyToggle = document.getElementById("transparency-toggle");
+            transparencyToggle.addEventListener("change", () => {
+                isTransparent = transparencyToggle.checked;
+                handleColorInput();
+            });
+
+            // Add event listener to the font size input
+            const fontSizeInput = document.getElementById("font-size-input");
+            fontSizeInput.addEventListener("input", displayRandomWords);
+
+            // Add event listener to the bold toggle checkbox
+            const boldToggle = document.getElementById("bold-toggle");
+            boldToggle.addEventListener("change", displayRandomWords);
+
+            // Add event listener to the text source
+            const textSource = document.getElementById("text-source");
+            textSource.addEventListener("change", loadDictionaryFromFile);
+
+            loadDictionaryFromFile();
+
+            //
+            // TYPING DISPLAY CODE END ----------------------------------
+
+
+            // PATTERN CODE ----------------------------------
+            //
+
+            let numLayers = 8;
+            let length = 100;
+            let height = 100;
+            let sineRows = 4
+            let sineAmplitude = 50;
+            let animationSpeed = 2;
+            let color = "#000000";
+            let backgroundColor = "#f0f0f0";
+            let patternType = "none";
+            let patternAngle = 0;
+            let patternWidth = 1500;
+
+            // Create canvas and context
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+
+            // Sine wave:
+            const sineWave = {
+                freq: 0.027,
+                speed: 0.2,
+                phi: 0,
+            }
+
+            // Chevron
+            const cRows = 5;
+            const nRows = 10;
+            const chevron = {
+                width: 70,
+                height: 150,
+                speed: 0.2
+            }
+
+
+            // Checkerboard size and properties
+            let numUnits = Math.floor((patternWidth + 600) / length); // Adjusted width with white space
+            let canvasHeight = height * numLayers;
+
+            // Update canvas size
+            function updateCanvasSize() {
+                canvas.width = window.innerWidth;
+                canvasHeight = height * numLayers;
+                canvas.height = canvasHeight;
+                numUnits = Math.floor((patternWidth + 600) / length); // Adjusted width with white space
+            }
+
+            // Function to draw a single square on the canvas
+            function drawSquare(x, y, color) {
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, length, height);
+            }
+
+            // Function to draw the checkerboard pattern
+            function drawCheckerboardRight() {
+                for (let j = 0; j < numLayers; j++) {
+                    for (let i = 0; i < numUnits; i++) {
+                        const x = (i * length + offset);
+                        const y = j * height;
+
+                        if ((i + j) % 2 === 0) {
+                            drawSquare(x, y, color);
+                        } else {
+                            drawSquare(x, y, backgroundColor);
+                        }
+                    }
+                }
+
+                // Draw rectangles to cover the sides based on pattern width
+                ctx.fillStyle = backgroundColor;
+                ctx.fillRect(
+                    0,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+                ctx.fillRect(
+                    window.innerWidth - (window.innerWidth - patternWidth) / 2,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+            }
+
+
+
+            function drawCheckerboardLeft() {
+            
+                const patternWidth = (numUnits) * length;
+                offset = (offset - animationSpeed) % patternWidth;
+                if (offset < 0){
+                    offset -= patternWidth;
+                }
+                for (let j = 0; j < numLayers; j++) {
+                    for (let i = 1; i <= numUnits + 101; i++) {
+                        const x = ((i * length + offset) % patternWidth);
+
+                        /*
+                        if ( x < 0 ){
+                            offset += patternWidth;
+                        }
+                        */
+                        const y = j * height;
+
+                        if ((i + j) % 2 === 0) {
+                            drawSquare(x, y, color);
+                        } else {
+                            drawSquare(x, y, backgroundColor);
+                        }
+                    }
+                }
+
+                // Draw rectangles to cover the sides based on pattern width
+                ctx.fillStyle = backgroundColor;
+                ctx.fillRect(
+                    0,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+                ctx.fillRect(
+                    window.innerWidth - (window.innerWidth - patternWidth) / 2,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+            }
+
+
+            function drawCheckerboardUp(){
+
+                const patternWidth = (numUnits) * height;
+                offset = (offset + ( animationSpeed * 0.1 * 0.1)) % patternWidth;
+                
+                for (let j = 0; j < numUnits; j++) {
+                    for (let i = 0; i < numUnits; i++) {
+                        const x = i * length;
+                        const y = ((j * height - offset) % patternWidth);
+
+                        if ((i + j) % 2 === 0) {
+                            drawSquare(x, y, color);
+                        } else {
+                            drawSquare(x, y, backgroundColor);
+                        }
+                    }
+                }
+
+                // Draw rectangles to cover the sides based on pattern width
+                ctx.fillStyle = backgroundColor;
+                ctx.fillRect(
+                    0,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+                ctx.fillRect(
+                    window.innerWidth - (window.innerWidth - patternWidth) / 2,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+                
+                
+            }
+
+
+            function drawCheckerboardDown() {
+
+                const patternWidth = (numUnits) * height;
+                offset = (offset + (animationSpeed * 0.1 * 0.1)) % (patternWidth);
+                
+                for (let j = 0; j < numLayers; j++) {
+                    for (let i = 0; i < numUnits; i++) {
+                        const x = i * length;
+                        const y = ((j * height + offset) % patternWidth);
+
+                        if ((i + j) % 2 === 0) {
+                            drawSquare(x, y, color);
+                        } else {
+                            drawSquare(x, y, backgroundColor);
+                        }
+                    }
+                }
+
+                // Draw rectangles to cover the sides based on pattern width
+                ctx.fillStyle = backgroundColor;
+                ctx.fillRect(
+                    0,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+                ctx.fillRect(
+                    window.innerWidth - (window.innerWidth - patternWidth) / 2,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+                
+                /* const patternWidth = (numUnits) * height;
+                offset = (offset + (Date.now() * animationSpeed * 0.1)) % (patternWidth);
+
+                if (offset < 0){
+                    offset += patternWidth
+                }
+                
+                for (let j = 0; j < numUnits; j++) {
+                    for (let i = 0; i < numUnits; i++) {
+                        const x = i * length;
+                        const y = ((j * height + offset) % patternWidth) % patternWidth;
+
+                        if ((i + j) % 2 === 0) {
+                            drawSquare(x, y, color);
+                        } else {
+                            drawSquare(x, y, backgroundColor);
+                        }
+                    }
+                }
+
+                // Draw rectangles to cover the sides based on pattern width
+                ctx.fillStyle = backgroundColor;
+                ctx.fillRect(
+                    0,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+                ctx.fillRect(
+                    window.innerWidth - (window.innerWidth - patternWidth) / 2,
+                    0,
+                    (window.innerWidth - patternWidth) / 2,
+                    canvasHeight
+                );
+                */
+                
+            }
+
+
+            // Function to draw the sine pattern horizontally
+            function drawSineH(row) {
+                const yCenter = ((canvas.height/sineRows) * row) + 100 ;
+
+                ctx.beginPath();
+                ctx.moveTo(0, yCenter);
+
+
+                ctx.lineWidth = 40;
+
+                for (let x=0; x < canvas.width; x++){
+                    const y = sineAmplitude * Math.sin(sineWave.freq * x + sineWave.phi);
+                    ctx.lineTo(x, yCenter - y);
+                }
+
+                
+                ctx.strokeStyle = color;
+                 ctx.fillStyle = backgroundColor
+                ctx.stroke();
+
+
+            }
+
+            // Function to draw the sine pattern vertically
+            function drawSineV(row) {
+                const xCenter = ((canvas.width/sineRows) * row) + 100 ;
+
+                ctx.beginPath();
+                ctx.moveTo(xCenter, 0);
+
+
+                ctx.lineWidth = 40;
+
+                for (let y=0; y < canvas.height; y++){
+                    const x = sineAmplitude * Math.sin(sineWave.freq * y + sineWave.phi);
+                    ctx.lineTo(xCenter - x, y);
+                }
+
+                
+                ctx.strokeStyle = color;
+                ctx.stroke();
+            }
+
+            function drawRightChevron(row, speed) {
+                const yCenter = ((canvas.height/cRows) * row) + ((canvas.height / cRows) / 2);
+                const nChevrons = 2 * (canvas.width / chevron.width);
+                let spacing = (chevron.width);
+                const time = speed * Date.now();
+
+
+                for (let i = 0; i < nChevrons - 1; i++){ 
+                    const xCenter = ((canvas.height / 2) + (time / 10) + i * (canvas.width + spacing)) % (canvas.width);
+                    ctx.beginPath();
+                    ctx.moveTo(xCenter, yCenter);
+                    ctx.lineWidth = 5;
+                    ctx.lineTo(xCenter + chevron.width/2, yCenter + chevron.height/2);
+                    ctx.lineTo(xCenter, yCenter + (chevron.height));
+                    ctx.lineTo(xCenter - chevron.width, yCenter + chevron.height);
+                    ctx.lineTo(xCenter - 1/2*chevron.width, yCenter + chevron.height/2);
+                    ctx.lineTo(xCenter - chevron.width, yCenter)
+                    ctx.closePath();
+
+                    if (i % 2 === 0){
+                        ctx.fillStyle = backgroundColor;
+                        ctx.fill();
+                    }else{
+                        ctx.fillStyle = color;
+                        ctx.fill();
+                    }
+                }
+            }
+
+            function drawLeftChevron(row, speed) {
+                const yCenter = ((canvas.height/cRows) * row) + ((canvas.height / cRows) / 2);
+                const nChevrons = 2 * (canvas.width / chevron.width);
+                let spacing = (chevron.width);
+                const time = (speed) * Date.now();
+                // const tWidth = nChevrons * (chevron.width + spacing);
+                // const offset = (canvas.width + spacing) - ((time) % tWidth);
+                for (let i = 0; i < nChevrons - 1; i++){
+                    const xCenter = canvas.width - ((canvas.height / 2) + (time / 10) + i * (canvas.width + spacing)) % canvas.width;
+                    ctx.beginPath();
+                    ctx.moveTo(xCenter, yCenter);
+                    ctx.lineWidth = 5;
+                    ctx.lineTo(xCenter - chevron.width, yCenter)
+                    ctx.lineTo(xCenter - 3/2*chevron.width, yCenter + chevron.height/2);
+                    ctx.lineTo(xCenter - chevron.width, yCenter + chevron.height);
+                    ctx.lineTo(xCenter, yCenter + (chevron.height));
+                    ctx.lineTo(xCenter - 1/2*chevron.width, yCenter + chevron.height/2);
+                    ctx.closePath();
+                    if (i % 2 === 0){
+                        ctx.fillStyle = backgroundColor;
+                        ctx.fill();
+                    }else{
+                        ctx.fillStyle = color;
+                        ctx.fill();
+                    }
+                }
+            }
+
+            function drawChevronUp(row, speed) {
+                const xCenter = ((canvas.width/nRows) * row);
+                const nChevrons = 14;
+                const spacing = 100;
+                const time = (speed) * Date.now();
+                for (let i = 0; i < nChevrons; i++){
+                    const yCenter = canvas.height - ((canvas.width / 2) + (time / 10) + i * (canvas.height + spacing)) % canvas.height;
+                    ctx.beginPath();
+                    ctx.moveTo(xCenter, yCenter);
+                    ctx.lineWidth = 5;
+                    ctx.lineTo(xCenter - chevron.height/2, yCenter - chevron.width/2);
+                    ctx.lineTo(xCenter - chevron.height, yCenter);
+                    ctx.lineTo(xCenter - chevron.height, yCenter + chevron.width);
+                    ctx.lineTo(xCenter - chevron.height/2, yCenter + chevron.width/2);
+                    ctx.lineTo(xCenter, yCenter + chevron.width);
+                    ctx.closePath();
+
+                    ctx.fillStyle = color;
+                    ctx.fill();
+
+                }
+            }
+
+            function drawChevronDown(row, speed) {
+                const xCenter = ((canvas.width/nRows) * row);
+                const nChevrons = 14;
+                const spacing = 100;
+                const time = (speed) * Date.now();
+                for (let i = 0; i < nChevrons; i++){
+                    const yCenter = ((canvas.width / 2) + (time / 10) + i * (canvas.height + spacing)) % canvas.height;
+                    ctx.beginPath();
+                    ctx.moveTo(xCenter, yCenter);
+                    ctx.lineWidth = 5;
+                    ctx.lineTo(xCenter - chevron.height/2, yCenter + chevron.width/2)
+                    ctx.lineTo(xCenter - chevron.height, yCenter);
+                    ctx.lineTo(xCenter - chevron.height, yCenter + chevron.width);
+                    ctx.lineTo(xCenter - chevron.height/2, yCenter + 3*chevron.width/2)
+                    ctx.lineTo(xCenter, yCenter + chevron.width);
+                    ctx.closePath();
+
+                    ctx.fillStyle = color;
+                    ctx.fill();
+
+                }
+            }
+
+
+
+            // Update the pattern based on the selected pattern type
+            function updatePattern() {
+                if (patternType === "none") {
+                    return;
+                }
+                if (direction === "right"){
+                    if (patternType === "checkerboard") {
+                        drawCheckerboardRight();
+                    } else if (patternType === "sine") {
+                        for (let i = 0; i < sineRows; i++){
+                            drawSineH(i);
+                        }
+                        sineWave.phi -= sineWave.speed * animationSpeed;
+                    } else if (patternType === "chevron") {
+                        for (let i = 0; i < cRows; i++){
+                            drawRightChevron(i, animationSpeed);
+                        }
+                    }
+                } else if (direction === "left"){
+                    if (patternType === "checkerboard") { 
+                        drawCheckerboardLeft();
+                    } else if (patternType === "sine") {
+                        for (let i = 0; i < sineRows; i++){
+                            drawSineH(i);
+                        }
+                        sineWave.phi += sineWave.speed * animationSpeed;
+                    } else if (patternType === "chevron") {
+                        for (let i = 0; i < cRows; i++){
+                            drawLeftChevron(i, animationSpeed);
+                        }
+                    }
+                } else if (direction === "up"){
+                    if (patternType === "checkerboard"){
+                        drawCheckerboardUp();
+                    } else if (patternType === "sine") {
+                        for (let i = 0; i < sineRows; i++){
+                            drawSineV(i);
+                        }
+                        sineWave.phi += sineWave.speed * animationSpeed;
+                    } else if (patternType === "chevron"){
+                        for (let i = 0; i < nRows; i++){
+                            drawChevronUp(i, animationSpeed);
+                        }
+                    }
+                } else if (direction === "down"){
+                    if (patternType === "checkerboard"){
+                        drawCheckerboardDown()
+                    } else if (patternType === "sine") {
+                        for (let i = 0; i < sineRows; i++){
+                            drawSineV(i);
+                        }
+                        sineWave.phi -= sineWave.speed * animationSpeed;
+                    } else if (patternType === "chevron"){
+                        for (let i = 0; i < nRows; i++){
+                            drawChevronDown(i, animationSpeed);
+                        }
+                    }
+                }
+                
+            }
+
+
+            // Checkerboard animation variables
+            let offset = 0;
+            let animationId;
+            let lastFrameTime = 0;
+            const frameRate = 60;
+            const frameDuration = 1000 / frameRate;
+
+            // Animation loop
+            function animate(timestamp) {
+                const elapsed = timestamp - lastFrameTime;
+
+                if (elapsed > frameDuration) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    updatePattern();
+
+                    if (direction == 'left' && patternType == "checkerboard"){
+                        // offset -= animationSpeed; 
+                        offset -= animationSpeed;
+                    } else if (direction == 'down' && patternType == "chevron") {
+                        // offset -= animationSpeed;
+                        offset += animationSpeed;
+
+                    } else{
+                        offset += animationSpeed; // Adjust the speed of the animation by changing this value
+                    }
+                    
+                    // Reset the offset when the pattern goes off the screen
+                    if (offset >= 2 * length) {
+                        offset = 0;
+                    }
+
+                    lastFrameTime = timestamp;
+                }
+
+                animationId = requestAnimationFrame(animate);
+            }
+
+            // Start the animation
+            function startAnimation() {
+                animationId = requestAnimationFrame(animate);
+            }
+
+            // Stop the animation
+            function stopAnimation() {
+                cancelAnimationFrame(animationId);
+            }
+
+            // Function to update variables and restart the animation
+            function updateVariables() {
+                numLayers = parseInt(
+                    document.getElementById("numLayers").value
+                );
+                length = parseInt(document.getElementById("length").value);
+                height = parseInt(document.getElementById("height").value);
+                sineRows = parseInt(document.getElementById("sineRows").value);
+                sineAmplitude = parseInt(document.getElementById("sineAmplitude").value);
+                animationSpeed = parseInt(
+                    document.getElementById("animationSpeed").value
+                );
+                color = document.getElementById("color").value;
+                backgroundColor =document.getElementById("backgroundColor").value;
+                patternType = document.getElementById("patternType").value;
+                direction = document.getElementById("direction").value;
+                patternAngle = parseInt(
+                    document.getElementById("patternAngle").value
+                );
+                patternWidth = parseInt(
+                    document.getElementById("patternWidth").value
+                );
+
+                updateCanvasSize();
+                stopAnimation();
+                startAnimation();
+            }
+
+            // Event listener for the Enter button
+            document
+                .getElementById("updateBtn")
+                .addEventListener("click", updateVariables);
+            
+            document
+                .getElementById("submit")
+                .addEventListener("click", submitCSV);
+
+            // Resize canvas and start animation when the window is resized
+            window.addEventListener("resize", function () {
+                updateCanvasSize();
+                stopAnimation();
+                startAnimation();
+            });
+
+            //
+            // PATTERN CODE END ----------------------------------
+
+            // Initial setup
+            updateCanvasSize();
+            startAnimation();
+        </script>
+    
+    </body>
+</html>

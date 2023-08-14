@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Keystroke events log </title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Keystroke events log</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Key</th>
+        <th>Event</th>
+        <th>Timestamp</th>
+        <th>Hold Time (ms)</th>
+        <th>Lag Time (ms)</th>
+      </tr>
+    </thead>
+    <tbody id="logTableBody"></tbody>
+  </table>
+  <button id="downloadButton">Download CSV</button>
+
+  <script>
+    let previousKey = null;
+    let previousReleaseTimestamp = 0;
+    const logTableBody = document.getElementById("logTableBody");
+    const downloadButton = document.getElementById("downloadButton");
+    let csvData = "Key,Event,Timestamp,Hold Time (ms),Lag Time (ms)\n";
+
+    // Add event listeners for key actions 
+    document.addEventListener("keydown", event => logEvent("press", event));
+    document.addEventListener("keyup", event => logEvent("release", event));
+
+    // Log events and update the table
+    function logEvent(eventType, event) {
+      const timestamp = Date.now();
+
+      if (eventType === "press") {
+        if (previousKey !== null) {
+          const holdTime = previousReleaseTimestamp !== 0 ? timestamp - previousReleaseTimestamp : 0;
+          const lagTime = timestamp - previousKey.timestamp;
+
+          const newRow = document.createElement("tr");
+          newRow.innerHTML = `
+            <td>${previousKey.key}</td>
+            <td>release</td>
+            <td>${formatTimestamp(previousKey.timestamp)}</td>
+            <td></td>
+            <td>${lagTime}</td>
+          `;
+          logTableBody.appendChild(newRow);
+          csvData += `${previousKey.key},release,${previousKey.timestamp},${""},${lagTime}\n`;
+        }
+        previousKey = { key: event.key, timestamp };
+      } else if (eventType === "release" && previousKey !== null) {
+        const holdTime = timestamp - previousKey.timestamp;
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+          <td>${event.key}</td>
+          <td>press</td>
+          <td>${formatTimestamp(timestamp)}</td>
+          <td>${holdTime}</td>
+          <td></td>
+        `;
+        logTableBody.appendChild(newRow);
+        csvData += `${event.key},press,${timestamp},${holdTime},${""}\n`;
+        previousReleaseTimestamp = timestamp;
+      }
+    }
+
+    // Handle CSV download
+    downloadButton.addEventListener("click", () => {
+      const blob = new Blob([csvData], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "keystroke_log.csv";
+      a.click();
+    });
+
+    // Format timestamp  
+    function formatTimestamp(timestamp) {
+      const date = new Date(timestamp);
+      return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}.${date.getMilliseconds()}`;
+    }
+  </script>
+</body>
+</html>
