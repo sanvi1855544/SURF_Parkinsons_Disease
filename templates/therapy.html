@@ -282,8 +282,11 @@
             function toCSV(keystrokes){
                 let csvFile = 'keystroke,pTimestamp,rTimestamp, holdTime,pressToPress\n';
                 for (const keystroke of keystrokes) {
-                    const rTimestamp = keystroke.rTimestamp ? new Date(keystroke.rTimestamp).toISOString() : '';
+                    const rTimestamp = keystroke.rTimestamp ? new Date (keystroke.rTimestamp).toISOString() : 'null';
+                    // const holdTime = keystroke.holdTime !== undefined ? keystroke.holdTime : 'null';
+                    // const pressToPress = keystroke.presstoPress !== undefined ? keystroke.pressToPress : 'null';
                     csvFile += `${keystroke.key},${new Date(keystroke.pTimestamp).toISOString()},${rTimestamp || ''},${keystroke.holdTime || ''},${keystroke.pressToPress || ''}\n`;
+                    //csvFile += `${keystroke.key},${new Date(keystroke.pTimestamp).toISOString()},${rTimestamp},${holdTime},${pressToPress}\n`
                 }
                 return csvFile;
             }
@@ -494,6 +497,29 @@
             textSource.addEventListener("change", loadDictionaryFromFile);
 
             loadDictionaryFromFile();
+
+            function compareCharacters(){
+                const charTyped = allKeystrokes
+                    .filter(keystroke => keystroke.key !== ' ')
+                    .map(keystroke => keystroke.key)
+                    .join('')
+                const charDisplay = rectangle.innerText.replace(/ /g, '');
+
+                let correctCount = 0;
+                const min = Math.min(charTyped.length, charDisplay.length);
+
+                for (let i = 0; i < min; i++){
+                    if (charTyped[i] === charDisplay[i]) {
+                        correctCount++;
+                    }
+                }
+                const accuracy = (correctCount / charDisplay.length) * 100;
+                const errors = charDisplay.length - correctCount;
+
+                console.log(`Typing accuracy: ${accuracy.toFixed(2)}%`);
+                console.log(`Total errors: ${errors}`);
+            }
+            compareCharacters();
 
             //
             // TYPING DISPLAY CODE END ----------------------------------
