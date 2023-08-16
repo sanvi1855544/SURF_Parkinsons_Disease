@@ -500,21 +500,23 @@
 
             function compareCharacters(){
                 const charTyped = allKeystrokes
-                    .filter(keystroke => keystroke.key !== ' ')
                     .map(keystroke => keystroke.key)
                     .join('')
-                const charDisplay = rectangle.innerText.replace(/ /g, '');
+                const charDisplay = rectangle.innerText;
 
-                let correctCount = 0;
+                let correct = 0;
+                let error = 0;
                 const min = Math.min(charTyped.length, charDisplay.length);
 
                 for (let i = 0; i < min; i++){
                     if (charTyped[i] === charDisplay[i]) {
-                        correctCount++;
+                        correct++;
+                    } else if (charTyped[i] !== ' ') {
+                        error++;
                     }
                 }
-                const accuracy = (correctCount / charDisplay.length) * 100;
-                const errors = charDisplay.length - correctCount;
+                const accuracy = (correct / charDisplay.length) * 100;
+                const errors = error;
 
                 console.log(`Typing accuracy: ${accuracy.toFixed(2)}%`);
                 console.log(`Total errors: ${errors}`);
