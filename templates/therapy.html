@@ -69,8 +69,8 @@
                 position: absolute;
                 top: 520px;
                 left: 1050px;
-                width: 180px;
-                height: 20px;
+                width: 500px;
+                height: 200px;
                 cursor: move;
             }
 
@@ -316,8 +316,8 @@
              
             }
 
-            let initialHeight = 2000;
-            let initialWidth = 1000; 
+            let initialHeight = 0;
+            let initialWidth = 0; 
 
             // Function to make the rectangle draggable
             function makeDraggable(element) {
@@ -900,6 +900,7 @@
                             drawSineH(i);
                         }
                         sineWave.phi -= sineWave.speed * animationSpeed;
+                        document.body.style.backgroundColor = backgroundColor;
                     } else if (patternType === "chevron") {
                         for (let i = 0; i < cRows; i++){
                             drawRightChevron(i, animationSpeed);
@@ -913,6 +914,7 @@
                             drawSineH(i);
                         }
                         sineWave.phi += sineWave.speed * animationSpeed;
+                        document.body.style.backgroundColor = backgroundColor;
                     } else if (patternType === "chevron") {
                         for (let i = 0; i < cRows; i++){
                             drawLeftChevron(i, animationSpeed);
@@ -926,6 +928,7 @@
                             drawSineV(i);
                         }
                         sineWave.phi += sineWave.speed * animationSpeed;
+                        document.body.style.backgroundColor = backgroundColor;
                     } else if (patternType === "chevron"){
                         for (let i = 0; i < nRows; i++){
                             drawChevronUp(i, animationSpeed);
@@ -939,6 +942,7 @@
                             drawSineV(i);
                         }
                         sineWave.phi -= sineWave.speed * animationSpeed;
+                        document.body.style.backgroundColor = backgroundColor;
                     } else if (patternType === "chevron"){
                         for (let i = 0; i < nRows; i++){
                             drawChevronDown(i, animationSpeed);
